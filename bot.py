@@ -2,6 +2,16 @@ import discord
 from discord.ext import commands
 import os
 
+import asyncio
+import numpy as np
+import random
+import sqlite3
+
+import nchanger as ncg
+import db
+import embed as blow
+import changer as cg
+
 bot = commands.Bot(command_prefix='>', help_command=None)
 
 dab = sqlite3.connect("./framedata.db")
