@@ -11,6 +11,12 @@ def cgr (sk):
         sk = 'f.M'
     elif sk == 'fh':
         sk = 'f.H'
+    if sk == 'jl':
+        sk = 'j.L'
+    elif sk == 'jm':
+        sk = 'j.M'
+    elif sk == 'jh':
+        sk = 'j.H'
     elif sk == 'jtr':
         sk = 'j.TR'
     elif sk == 'j360l':
