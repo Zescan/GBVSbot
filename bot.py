@@ -4,6 +4,8 @@ import os
 
 bot = commands.Bot(command_prefix='>', help_command=None)
 
+dab = sqlite3.connect("./framedata.db")
+
 @bot.event
 async def on_ready():
     print('다음으로 로그인합니다: ')
