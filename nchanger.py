@@ -31,5 +31,14 @@ def ncgr (charname):
         charname = "anre"
     elif charname == '나루메아':
         charname = "narmaya"
-
+    elif charname == '조이':
+        charname = "zooey"
+    elif charname == '소리즈':
+        charname = "soriz"
+    elif charname == '칼리오스트로':
+        charname = "cagliostro"
+    elif charname == '유엘':
+        charname = "yuel"
+    elif charname == '유스테스':
+        charname = "Eustace"
     return charname
