@@ -11,6 +11,7 @@ import nchanger as ncg
 import db
 import embed as blow
 import changer as cg
+import kor_changer as kcg
 
 bot = commands.Bot(command_prefix='>', help_command=None)
 
