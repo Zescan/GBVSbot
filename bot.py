@@ -84,6 +84,10 @@ async def i(ctx, charname, command):
     charname = charname.capitalize()
     # command = command.lower()
     command = cg.cgr(command)
+    command = kcg.nor_cgr(command)
+    k = '12'
+    for j in k:
+        command = kcg.com_cgr(command)
     print(charname)
     print(command)
     if '.'in command:
