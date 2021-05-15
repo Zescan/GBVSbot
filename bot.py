@@ -15,7 +15,13 @@ import kor_changer as kcg
 
 bot = commands.Bot(command_prefix='>', help_command=None)
 
+charlist_path = os.path.dirname(os.path.abspath(__file__)) + "/캐릭목록.txt"
+o = open(charlist_path, "r", encoding="utf-8")
+charlist = o.read().split()
+
+
 dab = sqlite3.connect("./framedata.db")
+dbb = sqlite3.connect("sklist.db")
 
 @bot.event
 async def on_ready():
@@ -33,7 +39,10 @@ async def 명령어(ctx):
     embed=discord.Embed(title='명령어 목록', description='-괄호 안에 인자도 같이 써주세요!', color=0xfd4949)
     embed.add_field(name='>tip\n>설명서', value='파스티바_봇 사용설명서를 보여줍니다.', inline=False)
     embed.add_field(name='>핑\n>ping', value='현재 핑 상태를 측정합니다.', inline=False)
+    embed.add_field(name='>랜덤\n>r', value='랜덤으로 아무 캐릭터나 뽑아줍니다.', inline=False)
     embed.add_field(name='>캐릭터\n>char', value='캐릭터들 목록과 영문 이름을 보여줍니다.', inline=False)
+    embed.add_field(name='>기술 (캐릭명)\n>m (캐릭명)', value='해당 캐릭터의 기술 목록을 보여줍니다.', inline=False)
+    embed.add_field(name='>공략 (캐릭명)\n>g (캐릭명)', value='해당 캐릭터의 공략글을 보여줍니다.', inline=False)
     embed.add_field(name='>i (캐릭명) (기술 커맨드)\n>검색 (캐릭명) (기술 커맨드)', value='해당 캐릭터의 기술의 프레임데이터를 보여줍니다.', inline=False)
     await ctx.send(embed=embed)
 
@@ -115,6 +124,39 @@ async def i(ctx, charname, command):
         '가드시 이득': row[8],
         '히트시 이득': row[9]}
         await blow.t_embed(ctx, charname + " - " + command, row[2], info_dic)
+
+@bot.command(aliases=['기술'])
+async def m(ctx, character):
+    character = ncg.ncgr(character)
+    charname = character.capitalize()
+    print(charname)
+    query_ = "WHERE charname = '" + charname + "'"
+    # print(query_)
+    rows = db.db_sktable(dbb,query_)
+    if not rows:
+        embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
+        await ctx.send(embed=embed)
+    else:
+        info_ = {'기술명': [], '커맨드': []}
+        for row in rows:
+            info_['기술명'].append(row[1])
+            info_['커맨드'].append(row[2])
+        await blow.c_embed(ctx, charname, " 기술 목록 ", info_)
+
+@bot.command(aliases=['공략', 'G'])
+async def g(ctx, charname):
+    charname = ncg.rncgr(charname)
+    if charname in charlist:
+        await blow.g_embed(ctx, charname)
+    else:
+        embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
+        await ctx.send(embed=embed)
+
+@bot.command(aliases=['랜덤'])
+async def r(ctx):
+    choicechar = random.choice(charlist)
+    embed = discord.Embed(title="캐릭터 랜덤 선택 결과...", description=f'[{choicechar}] (이)가 나왔습니다.', color=0xb377ee)
+    await ctx.send(embed=embed)
 
 
 bot.run(os.environ['token'])

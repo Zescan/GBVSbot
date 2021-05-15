@@ -11,6 +11,14 @@ def nor_cgr (command):
         command = "c.H"
     elif command == '원강':
         command = "f.H"
+    elif command == '앉약':
+        command = "2L"
+    elif command == '앉중':
+        command = "2M"
+    elif command == '앉강':
+        command = "2H"
+    elif command == '앉특':
+        command = "2U"
     elif command == '점약':
         command = "j.L"
     elif command == '점중':

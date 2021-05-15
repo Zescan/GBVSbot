@@ -42,3 +42,48 @@ def ncgr (charname):
     elif charname == '유스테스':
         charname = "Eustace"
     return charname
+
+def rncgr (charname):
+    if charname == 'gran':
+        charname = "그랑"
+    elif charname == 'percival':
+        charname = "퍼시벌"
+    elif charname == 'charlotta':
+        charname = "샤를로테"
+    elif charname == 'ladiva':
+        charname = "파스티바"
+    elif charname == 'katalina':
+        charname = "카타리나"
+    elif charname == 'ferry':
+        charname = "페리"
+    elif charname == 'lowain':
+        charname = "로아인"
+    elif charname == 'lancelot':
+        charname = "랜슬롯"
+    elif charname == 'zeta':
+        charname = "제타"
+    elif charname == 'metera':
+        charname = "메테라"
+    elif charname == 'vaseraga':
+        charname = "바자라가"
+    elif charname == 'beelzebub':
+        charname = "벨제붑"
+    elif charname == 'belial':
+        charname = "벨리알"
+    elif charname == 'djeeta':
+        charname = "지타"
+    elif charname == 'anre':
+        charname = "우노"
+    elif charname == 'narmaya':
+        charname = "나루메아"
+    elif charname == 'zooey':
+        charname = "조이"
+    elif charname == 'soriz':
+        charname = "소리즈"
+    elif charname == 'cagliostro':
+        charname = "칼리오스트로"
+    elif charname == 'yuel':
+        charname = "유엘"
+    elif charname == 'Eustace':
+        charname = "유스테스"
+    return charname

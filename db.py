@@ -13,3 +13,14 @@ def db_table(db, query_str=''):
         cur.execute(execute_str)
         rows = cur.fetchall()
         return rows
+
+# db>데이터베이스 연결 , query>캐릭명
+def db_sktable(db, query_=''):
+    with db:
+        cur = db.cursor()
+        if bool(query_):
+            query_ = ' ' + query_
+        execute_ = 'SELECT * FROM skills' + query_
+        cur.execute(execute_)
+        rows = cur.fetchall()
+        return rows

@@ -55,7 +55,7 @@ def cgr (sk):
         sk = 'j.236236H'
     elif sk == 'j236236u':
         sk = 'j.236236U'
-    
     elif sk == 'oh':
         sk = 'MH'
+    
     return sk
