@@ -44,6 +44,7 @@ async def 명령어(ctx):
     embed.add_field(name='>기술 (캐릭명)\n>m (캐릭명)', value='해당 캐릭터의 기술 목록을 보여줍니다.', inline=False)
     embed.add_field(name='>공략 (캐릭명)\n>g (캐릭명)', value='해당 캐릭터의 공략글을 보여줍니다.', inline=False)
     embed.add_field(name='>i (캐릭명) (기술 커맨드)\n>검색 (캐릭명) (기술 커맨드)', value='해당 캐릭터의 기술의 프레임데이터를 보여줍니다.', inline=False)
+    embed.add_field(name='>깃허브\n>githib', value='파스티바_봇의 깃허브 링크를 보여줍니다.', inline=False)
     await ctx.send(embed=embed)
 
 @bot.command(aliases=['핑'])
@@ -158,5 +159,9 @@ async def r(ctx):
     embed = discord.Embed(title="캐릭터 랜덤 선택 결과...", description=f'[{choicechar}] (이)가 나왔습니다.', color=0xb377ee)
     await ctx.send(embed=embed)
 
+@bot.command(aliases=['깃허브'])
+async def github(ctx):
+    embed = discord.Embed(title="파스티바_봇 깃허브 링크", description="https://github.com/crew852/GBVSbot", color=0xb377ee)
+    await ctx.send(embed=embed)
 
 bot.run(os.environ['token'])
