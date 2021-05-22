@@ -99,6 +99,7 @@ async def char(ctx):
 async def i(ctx, charname, command):
     charname = ncg.ncgr(charname)
     charname = charname.capitalize()
+    # command = command.lower()
     command = cg.cgr(command)
     command = kcg.nor_cgr(command)
     k = '12'
@@ -111,7 +112,7 @@ async def i(ctx, charname, command):
     else:
         command = command.upper()
     query_str = "WHERE charname = '" + charname + "' AND command = '" + command + "'"
-
+    print(query_str)
     rows = db.db_table(dab,query_str)
     if not rows:
         embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
@@ -125,8 +126,7 @@ async def i(ctx, charname, command):
         '회수 프레임': row[7],
         '가드시 이득': row[8],
         '히트시 이득': row[9]}
-        await blow.t_embed(ctx, charname + " - " + command, row[2], info_dic)
-
+        await blow.t_embed(ctx, charname + " - " + command, row[2], info_dic, row[10], row[11])
 @slash.slash(name='기술', description='해당 캐릭터의 기술 목록을 보여줍니다.', guild_ids=guild_ids)
 async def m(ctx, character):
     character = ncg.ncgr(character)
