@@ -127,6 +127,7 @@ async def i(ctx, charname, command):
         '가드시 이득': row[8],
         '히트시 이득': row[9]}
         await blow.t_embed(ctx, charname + " - " + command, row[2], info_dic, row[10], row[11])
+        
 @slash.slash(name='기술', description='해당 캐릭터의 기술 목록을 보여줍니다.', guild_ids=guild_ids)
 async def m(ctx, character):
     character = ncg.ncgr(character)
