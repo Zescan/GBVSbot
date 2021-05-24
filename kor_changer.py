@@ -35,6 +35,10 @@ def nor_cgr (command):
         command = "j.TR"
     elif command == '오버헤드':
         command = "MH"
+    elif command == '오의':
+        command = "236236H"
+    elif command == '해방오의':
+        command = "236236U"
     return command
 
 def com_cgr (command):
@@ -47,22 +51,3 @@ def com_cgr (command):
     elif '특' in command:
         command = command.replace('특', 'U')
     return command
-
-# a='236약214중'
-# print(a)
-# for i in a:
-#     if '약' in a:
-#         a = a.replace('약', 'L')
-#     elif '중' in a:
-#         a = a.replace('중', 'M')
-# print(a)
-
-# command = '236약214중'
-# stlen = len(command)
-# print(stlen)
-# for stlen in command:
-#     if '약' in command:
-#         command = command.replace('약' , 'L')
-#     elif '중' in command:
-#         command = command.replace('중' , 'M')
-# print(command)
