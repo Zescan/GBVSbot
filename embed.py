@@ -10,9 +10,9 @@ async def t_embed(channel, title, description, data, icon, image):
   embed.set_image(url = image)
   for info_key in data:
     if info_key == '가드판정':
-        embed.add_field(name=info_key, value=str(data[info_key]), inline=False)
+        embed.add_field(name=info_key, value="```" + str(data[info_key]) + "```", inline=False)
     else:
-        embed.add_field(name=info_key, value=str(data[info_key]), inline=True)
+        embed.add_field(name=info_key, value="```" + str(data[info_key]) + "```", inline=True)
   message = await channel.send(embed=embed)
   return message
 
@@ -22,10 +22,10 @@ async def c_embed(channel, title, description, data):
     value_str = ''
     for obj in data[info_key]:
       value_str += '\n' + obj
-    embed.add_field(name=info_key, value=value_str, inline=True)
+    embed.add_field(name=info_key, value="```" + value_str + "```", inline=True)
   message = await channel.send(embed=embed)
   return message
-
+  
 async def g_embed(channel, title):
   embed = discord.Embed(title = title, description = '공략글', color=0x00bd26)
   if title == '그랑':
