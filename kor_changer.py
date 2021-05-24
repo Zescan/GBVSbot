@@ -50,4 +50,6 @@ def com_cgr (command):
         command = command.replace('강', 'H')
     elif '특' in command:
         command = command.replace('특', 'U')
+    elif '평' in command:
+        command = command.replace('평', 'X')
     return command
