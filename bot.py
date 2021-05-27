@@ -1,11 +1,13 @@
 import discord
 from discord_slash import SlashCommand
+from dotenv import load_dotenv
 
 import os
 import asyncio
 import numpy as np
 import random
 import sqlite3
+import re
 
 import nchanger as ncg
 import db
@@ -105,12 +107,15 @@ async def i(ctx, charname, command):
     k = '12'
     for j in k:
         command = kcg.com_cgr(command)
+    command = kcg.sknm_cgr(command)
     print(charname)
-    print(command)
-    if '.'in command:
-        pass
-    else:
-        command = command.upper()
+    command = command.upper()
+    match = re.search(r"(.\.)", command)
+    if match:
+        #print(match.groups())
+        for dot in match.groups():
+            command = command.replace(dot, dot.lower(), 1)
+    print(command)    
     query_str = "WHERE charname = '" + charname + "' AND command = '" + command + "'"
     print(query_str)
     rows = db.db_table(dab,query_str)
@@ -165,4 +170,5 @@ async def github(ctx):
     embed = discord.Embed(title="파스티바_봇 깃허브 링크", description="https://github.com/crew852/GBVSbot", color=0xb377ee)
     await ctx.send(embed=embed)
 
+load_dotenv()
 bot.run(os.environ['token'])
