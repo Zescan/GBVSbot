@@ -1,47 +1,97 @@
+# DEEPDIVE님 패치
 def ncgr (charname):
-    if charname == '그랑':
+    if charname.startswith('그'):
         charname = "gran"
-    elif charname == '퍼시벌':
+    elif charname.startswith('퍼'):
         charname = "percival"
-    elif charname == '샤를로테':
+    elif charname.startswith('샤'):
         charname = "charlotta"
-    elif charname == '파스티바':
+    elif charname.startswith('감'):
+        charname = "charlotta"
+    elif charname.startswith('파'):
         charname = "ladiva"
-    elif charname == '카타리나':
+    elif charname.startswith('카'):
         charname = "katalina"
-    elif charname == '페리':
+    elif charname.startswith('페'):
         charname = "ferry"
-    elif charname == '로아인':
+    elif charname.startswith('로'):
         charname = "lowain"
-    elif charname == '랜슬롯':
+    elif charname.startswith('랜'):
         charname = "lancelot"
-    elif charname == '제타':
+    elif charname.startswith('란'):
+        charname = "lancelot"
+    elif charname.startswith('제'):
         charname = "zeta"
-    elif charname == '메테라':
+    elif charname.startswith('메'):
         charname = "metera"
-    elif charname == '바자라가':
+    elif charname.startswith('바'):
         charname = "vaseraga"
-    elif charname == '벨제붑':
+    elif charname.endswith('붑'):
         charname = "beelzebub"
-    elif charname == '벨리알':
+    elif charname.startswith('벨'):
         charname = "belial"
-    elif charname == '지타':
+    elif charname.startswith('지'):
         charname = "djeeta"
-    elif charname == '우노':
+    elif charname.startswith('우'):
         charname = "anre"
-    elif charname == '나루메아':
+    elif charname.startswith('나'):
         charname = "narmaya"
-    elif charname == '조이':
+    elif charname.startswith('조'):
         charname = "zooey"
-    elif charname == '소리즈':
+    elif charname.startswith('소'):
         charname = "soriz"
-    elif charname == '칼리오스트로':
+    elif charname.startswith('칼'):
         charname = "cagliostro"
     elif charname == '유엘':
         charname = "yuel"
-    elif charname == '유스테스':
+    elif charname.startswith('유스'):
         charname = "Eustace"
     return charname
+
+# def ncgr (charname):
+#     if charname == '그랑':
+#         charname = "gran"
+#     elif charname == '퍼시벌':
+#         charname = "percival"
+#     elif charname == '샤를로테':
+#         charname = "charlotta"
+#     elif charname == '파스티바':
+#         charname = "ladiva"
+#     elif charname == '카타리나':
+#         charname = "katalina"
+#     elif charname == '페리':
+#         charname = "ferry"
+#     elif charname == '로아인':
+#         charname = "lowain"
+#     elif charname == '랜슬롯':
+#         charname = "lancelot"
+#     elif charname == '제타':
+#         charname = "zeta"
+#     elif charname == '메테라':
+#         charname = "metera"
+#     elif charname == '바자라가':
+#         charname = "vaseraga"
+#     elif charname == '벨제붑':
+#         charname = "beelzebub"
+#     elif charname == '벨리알':
+#         charname = "belial"
+#     elif charname == '지타':
+#         charname = "djeeta"
+#     elif charname == '우노':
+#         charname = "anre"
+#     elif charname == '나루메아':
+#         charname = "narmaya"
+#     elif charname == '조이':
+#         charname = "zooey"
+#     elif charname == '소리즈':
+#         charname = "soriz"
+#     elif charname == '칼리오스트로':
+#         charname = "cagliostro"
+#     elif charname == '유엘':
+#         charname = "yuel"
+#     elif charname == '유스테스':
+#         charname = "Eustace"
+#     return charname
 
 def rncgr (charname):
     if charname == 'gran':
