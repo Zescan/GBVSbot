@@ -4,9 +4,7 @@ def ncgr (charname):
         charname = "gran"
     elif charname.startswith('퍼'):
         charname = "percival"
-    elif charname.startswith('샤'):
-        charname = "charlotta"
-    elif charname.startswith('감'):
+    elif charname.startswith('샤') or charname.startswith('감'):
         charname = "charlotta"
     elif charname.startswith('파'):
         charname = "ladiva"
@@ -16,10 +14,8 @@ def ncgr (charname):
         charname = "ferry"
     elif charname.startswith('로'):
         charname = "lowain"
-    elif charname.startswith('랜'):
-        charname = "lancelot"
-    elif charname.startswith('란'):
-        charname = "lancelot"
+    elif charname.startswith('랜') or charname.startswith('란'):
+        charname = "lancelot"    
     elif charname.startswith('제'):
         charname = "zeta"
     elif charname.startswith('메'):
