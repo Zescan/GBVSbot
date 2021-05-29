@@ -30,7 +30,15 @@ async def on_ready():
     print('다음으로 로그인합니다: ')
     print(bot.user.name)
     print('connection was succesful')
-    await bot.change_presence(status=discord.Status.online, activity=discord.Game("'/명령어'로 기능확인"))
+    await bt(["'/'로 기능확인", "문의 > @Rolling_Pumpkin"])
+
+async def bt(games):
+    await bot.wait_until_ready()
+
+    while not bot.is_closed():
+        for g in games:
+            await bot.change_presence(status = discord.Status.online, activity=discord.Game(g))
+            await asyncio.sleep(10)
 
 
 # commands
