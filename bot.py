@@ -44,18 +44,18 @@ async def bt(games):
 # commands
 
 
-@slash.slash(name="명령어", description='명령어 목록을 보여줍니다.', guild_ids=guild_ids)
-async def list(ctx):
-    embed=discord.Embed(title='명령어 목록', description='-괄호 안의 인자도 같이 써주세요!', color=0xfd4949)
-    embed.add_field(name='/설명서', value='파스티바_봇 사용설명서를 보여줍니다.', inline=False)
-    embed.add_field(name='/핑', value='현재 핑 상태를 측정합니다.', inline=False)
-    embed.add_field(name='/랜덤', value='랜덤으로 아무 캐릭터나 뽑아줍니다.', inline=False)
-    embed.add_field(name='/캐릭터', value='캐릭터들 목록과 영문 이름을 보여줍니다.', inline=False)
-    embed.add_field(name='/기술 (캐릭명)', value='해당 캐릭터의 기술 목록을 보여줍니다.', inline=False)
-    embed.add_field(name='/공략 (캐릭명)', value='해당 캐릭터의 공략글을 보여줍니다.', inline=False)
-    embed.add_field(name='/검색 (캐릭명) (기술 커맨드)', value='해당 캐릭터의 기술의 프레임데이터를 보여줍니다.', inline=False)
-    embed.add_field(name='/깃허브', value='파스티바_봇의 깃허브 링크를 보여줍니다.', inline=False)
-    await ctx.send(embed=embed)
+# @slash.slash(name="명령어", description='명령어 목록을 보여줍니다.', guild_ids=guild_ids)
+# async def list(ctx):
+#     embed=discord.Embed(title='명령어 목록', description='-괄호 안의 인자도 같이 써주세요!', color=0xfd4949)
+#     embed.add_field(name='/설명서', value='파스티바_봇 사용설명서를 보여줍니다.', inline=False)
+#     embed.add_field(name='/핑', value='현재 핑 상태를 측정합니다.', inline=False)
+#     embed.add_field(name='/랜덤', value='랜덤으로 아무 캐릭터나 뽑아줍니다.', inline=False)
+#     embed.add_field(name='/캐릭터', value='캐릭터들 목록과 영문 이름을 보여줍니다.', inline=False)
+#     embed.add_field(name='/기술 (캐릭명)', value='해당 캐릭터의 기술 목록을 보여줍니다.', inline=False)
+#     embed.add_field(name='/공략 (캐릭명)', value='해당 캐릭터의 공략글을 보여줍니다.', inline=False)
+#     embed.add_field(name='/검색 (캐릭명) (기술 커맨드)', value='해당 캐릭터의 기술의 프레임데이터를 보여줍니다.', inline=False)
+#     embed.add_field(name='/깃허브', value='파스티바_봇의 깃허브 링크를 보여줍니다.', inline=False)
+#     await ctx.send(embed=embed)
 
 @slash.slash(name="핑", description='현재 핑 상태를 측정합니다.', guild_ids=guild_ids)
 async def ping(ctx):
@@ -171,6 +171,14 @@ async def r(ctx):
 @slash.slash(name="깃허브", description='파스티바_봇의 깃허브 링크를 보여줍니다.', guild_ids=guild_ids)
 async def github(ctx):
     embed = discord.Embed(title="파스티바_봇 깃허브 링크", description="https://github.com/crew852/GBVSbot", color=0xb377ee)
+    await ctx.send(embed=embed)
+
+@slash.slash(name="서버개수", description='파스티바_봇이 가입된 서버의 수를 보여줍니다.', guild_ids=guild_ids)
+async def server_cnt(ctx):
+    ch = 0
+    for g in bot.guilds:
+        ch += len(g.channels)
+    embed = discord.Embed(title="파스티바_봇은 현재...", description=f'[{ch}] 개 서버에 가입되어 있습니다.', color=0xb377ee)
     await ctx.send(embed=embed)
 
 bot.run(os.environ['token'])
