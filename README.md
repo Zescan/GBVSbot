@@ -82,6 +82,7 @@
 
 ---
 
-**개발 -** `GBVS 뉴비 채널` 닉네임 **Rolling_Pumpkin**
+> 개발 - `GBVS 뉴비 채널` 닉네임 **Rolling_Pumpkin**
+>
+> 개발 도움 - `GBVS 뉴비 채널` 닉네임 **DEEPDIVE(잠수;p)**
 
-**개발 도움 - **`GBVS 뉴비 채널` 닉네임 **DEEPDIVE(잠수;p)**
