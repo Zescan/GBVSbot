@@ -173,12 +173,19 @@ async def github(ctx):
     embed = discord.Embed(title="파스티바_봇 깃허브 링크", description="https://github.com/crew852/GBVSbot", color=0xb377ee)
     await ctx.send(embed=embed)
 
-@slash.slash(name="서버개수", description='파스티바_봇이 가입된 서버의 수를 보여줍니다.', guild_ids=guild_ids)
+@slash.slash(name="서버개수", description='(개발자기능)파스티바_봇이 가입된 서버의 수를 보여줍니다.', guild_ids=guild_ids)
 async def server_cnt(ctx):
     ch = 0
     for g in bot.guilds:
         ch += len(g.channels)
     embed = discord.Embed(title="파스티바_봇은 현재...", description=f'[{ch}] 개 서버에 가입되어 있습니다.', color=0xb377ee)
     await ctx.send(embed=embed)
+
+@slash.slash(name="서버목록", description='(개발자기능)파스티바_봇이 가입된 서버의 목록을 보여줍니다.', guild_ids=guild_ids)
+async def server_list(ctx):
+    s_list=[]
+    for server in bot.guilds:
+        s_list.append(server.name)
+    await ctx.send("\n".join(s_list))
 
 bot.run(os.environ['token'])
