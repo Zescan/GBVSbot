@@ -177,7 +177,7 @@ async def github(ctx):
 async def server_cnt(ctx):
     ch = 0
     for g in bot.guilds:
-        ch += len(g.channels)
+        ch += 1
     embed = discord.Embed(title="파스티바_봇은 현재...", description=f'[{ch}] 개 서버에 가입되어 있습니다.', color=0xb377ee)
     await ctx.send(embed=embed)
 
