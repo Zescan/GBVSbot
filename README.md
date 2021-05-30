@@ -6,7 +6,7 @@
 
 [2. Function](#2.-function)
 
-[3.How to use](#3.-how-to-use)
+[3. How to use](#3.-how-to-use)
 
 
 
