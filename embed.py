@@ -12,7 +12,7 @@ async def t_embed(channel, title, description, data, icon, image):
     if info_key == '가드판정':
         embed.add_field(name=info_key, value="```" + str(data[info_key]) + "```", inline=False)
     else:
-        embed.add_field(name=info_key, value="```" + str(data[info_key]) + "```", inline=True)
+        embed.add_field(name=info_key, value="```\n" + str(data[info_key]) + "\n```", inline=True)
   message = await channel.send(embed=embed)
   return message
 
