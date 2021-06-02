@@ -123,7 +123,7 @@ async def i(ctx, charname, command):
     print(query_str)
     rows = db.db_table(dab,query_str)
     if not rows:
-        embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
+        embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="파스티바_봇 사용 가이드 : https://gall.dcinside.com/m/granvs/64822", color=0xedf11e)
         await ctx.send(embed=embed)
     else:
         row = rows[0]

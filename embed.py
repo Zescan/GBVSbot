@@ -18,6 +18,7 @@ async def t_embed(channel, title, description, data, icon, image):
 
 async def c_embed(channel, title, description, data):
   embed = discord.Embed(title=title, description=description, color=0xf3fd68)
+  embed.set_footer(text="`236X`같은 커맨드는 'X'부분에 약/중/강 버전을 써주세요!")
   for info_key in data:
     value_str = ''
     for obj in data[info_key]:
