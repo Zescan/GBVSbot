@@ -31,7 +31,7 @@ def nor_cgr (command):
         command = "5U"
     elif command == '잡기':
         command = "TR"
-    elif command == '공중잡기':
+    elif command == '공중잡기' or command == '공잡':
         command = "j.TR"
     elif command == '오버헤드':
         command = "MH"
