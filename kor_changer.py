@@ -52,4 +52,8 @@ def com_cgr (command):
         command = command.replace('특', 'U')
     elif '평' in command:
         command = command.replace('평', 'X')
+    elif '점' in command:
+        command = command.replace('점', 'j.')
+    elif '공' in command:
+        command = command.replace('공', 'j.')
     return command
