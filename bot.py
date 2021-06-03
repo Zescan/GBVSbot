@@ -60,26 +60,26 @@ async def bt(games):
 @slash.slash(name="핑", description='현재 핑 상태를 측정합니다.', guild_ids=guild_ids)
 async def ping(ctx):
     latancy = bot.latency
-    embed=discord.Embed(title='현재 ping상태는...', description=f'{round(latancy * 1000)}ms 입니다.', color=0xfd4949)
+    embed=discord.Embed(title=':satellite: 현재 ping상태는...', description=f'{round(latancy * 1000)}ms 입니다.', color=0xfd4949)
     await ctx.send(embed=embed)
 
 @slash.slash(name="설명서", description='파스티바_봇 사용설명서를 보여줍니다.', guild_ids=guild_ids)
 async def tip(ctx):
-    embed=discord.Embed(title="파스티바_봇 사용 설명서", description="제작 - Rolling_Pumpkin", color=0x44e456)
-    embed.add_field(name="#프레임데이터", value="파스티바_봇은 Dustloop wiki 에서 프레임 데이터를 가져왔습니다", inline=False)
-    embed.add_field(name="#대,소문자", value="검색기능을 영어로 이용하실 때는 가능한 모두 소문자로 입력해주세요", inline=False)
-    embed.add_field(name="#한·영사용", value="기술 커맨드의 방향 표시의 숫자를 제외하면 모두 한·영 구분없이 사용하셔도 괜찮습니다", inline=False)
-    embed.add_field(name="#버튼 입력", value="약공격은 l (light)\n중공격은 m (middle)\n강공격은 h (heavy)\n아무 버튼이든 상관없는 경우 x (예시 : 236x)\n모으기 커맨드는 따로 표시할 필요없이 방향만 입력해주세요 \n(예시 : 샤를로테 글리터 온슬로트 커맨드 -> 46h)", inline=False)
-    embed.add_field(name="#특수 기술", value="잡기는 tr (throw), 오버헤드는 oh (overhead) 또는 mh (커맨드) 로 입력해주세요", inline=False)
-    embed.add_field(name="#공중 사용 기술", value="공중에서 사용하는 기술은 커맨드 앞에 j 를 붙여주세요", inline=False)
-    embed.add_field(name="#근,원거리 기본기", value="근거리는 공격키 앞에 c (close), 원거리는 f (far)를 붙여주세요", inline=False)
-    embed.add_field(name="검색예시)", value=">검색 그랑 214H (그랑-드라이브 버스트 강버젼)\n >i metera fm (메테라 원거리 중)", inline=False)
-    embed.add_field(name="#피드백", value="틀린 부분, 추가할 부분, 개선할 부분은 @Rolling_Pumpkin 으로 말씀해주세요", inline=False)
+    embed=discord.Embed(title=":bulb: 파스티바_봇 사용 설명서", description="제작 - Rolling_Pumpkin", color=0x44e456)
+    embed.add_field(name=":white_small_square: 프레임데이터", value="파스티바_봇은 Dustloop wiki 에서 프레임 데이터를 가져왔습니다", inline=False)
+    embed.add_field(name=":white_small_square: 한·영사용", value="기술 커맨드의 방향 표시의 숫자를 제외하면 모두 한·영 구분없이 사용하셔도 괜찮습니다", inline=False)
+    embed.add_field(name=":white_small_square: 대,소문자", value="검색기능을 영어로 이용하실 때는 가능한 모두 소문자로 입력해주세요", inline=False)
+    embed.add_field(name=":white_small_square: 버튼 입력", value="약공격은 :regional_indicator_l:  (light)\n중공격은 :regional_indicator_m:  (middle)\n강공격은 :regional_indicator_h:  (heavy)\n아무 버튼이든 상관없는 기술인 경우 x (예시 : 236x)\n모으기 커맨드는 따로 표시할 필요없이 방향만 입력해주세요 \n(예시 : 샤를로테 글리터 온슬로트 커맨드 -> 46강)", inline=False)
+    embed.add_field(name=":white_small_square: 특수 기술", value="잡기는 tr (throw), 오버헤드는 oh (overhead) 또는 mh (커맨드) 로 입력가능합니다.", inline=False)
+    embed.add_field(name=":white_small_square: 공중 사용 기술", value="공중에서 사용하는 기술은 커맨드 앞에 '점' 또는 :regional_indicator_j: 를 붙여주세요", inline=False)
+    embed.add_field(name=":white_small_square: 근,원거리 기본기", value="근거리는 공격키 앞에 :regional_indicator_c: (close), 원거리는 :regional_indicator_f: (far)를 붙여주세요", inline=False)
+    embed.add_field(name="검색예시)", value=">검색 그랑 214강 (그랑-드라이브 버스트 강버젼)\n >i metera fm (메테라 원거리 중)", inline=False)
+    embed.add_field(name=":white_small_square: 피드백", value="틀린 부분, 추가할 부분, 개선할 부분은 `@Rolling_Pumpkin` 으로 말씀해주세요", inline=False)
     await ctx.send(embed=embed)
 
 @slash.slash(name="캐릭터", description='캐릭터들 목록과 영문 이름을 보여줍니다.', guild_ids=guild_ids)
 async def char(ctx):
-    embed=discord.Embed(title="캐릭터 리스트", description="현재 검색 가능한 캐릭터 목록입니다.", color=0x6b9fff)
+    embed=discord.Embed(title=":page_with_curl: 캐릭터 리스트", description="현재 검색 가능한 캐릭터 목록입니다.", color=0x6b9fff)
     embed.add_field(name="그랑", value="Gran", inline=True)
     embed.add_field(name="나루메아", value="Narmaya", inline=True)
     embed.add_field(name="랜슬롯", value="Lancelot", inline=True)
@@ -107,7 +107,6 @@ async def char(ctx):
 async def i(ctx, charname, command):
     charname = ncg.ncgr(charname)
     charname = charname.capitalize()
-    # command = command.lower()
     command = cg.cgr(command)
     command = kcg.nor_cgr(command)
     k = '12'
@@ -123,7 +122,7 @@ async def i(ctx, charname, command):
     print(query_str)
     rows = db.db_table(dab,query_str)
     if not rows:
-        embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="파스티바_봇 사용 가이드 : https://gall.dcinside.com/m/granvs/64822", color=0xedf11e)
+        embed=discord.Embed(title=":warning: 해당하는 정보를 찾을 수 없습니다", description="파스티바_봇 사용 가이드 : https://gall.dcinside.com/m/granvs/64822", color=0xedf11e)
         await ctx.send(embed=embed)
     else:
         row = rows[0]
@@ -135,7 +134,7 @@ async def i(ctx, charname, command):
         '가드시 이득': row[8],
         '히트시 이득': row[9]}
         await blow.t_embed(ctx, charname + " - " + command, row[2], info_dic, row[10], row[11])
-        
+
 @slash.slash(name='기술', description='해당 캐릭터의 기술 목록을 보여줍니다.', guild_ids=guild_ids)
 async def m(ctx, character):
     character = ncg.ncgr(character)
@@ -144,14 +143,14 @@ async def m(ctx, character):
     query_ = "WHERE charname = '" + charname + "'"
     rows = db.db_sktable(dbb,query_)
     if not rows:
-        embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
+        embed=discord.Embed(title=":warning: 해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
         await ctx.send(embed=embed)
     else:
         info_ = {'기술명': [], '커맨드': []}
         for row in rows:
             info_['기술명'].append(row[1])
             info_['커맨드'].append(row[2])
-        await blow.c_embed(ctx, charname, " 기술 목록 ", info_)
+        await blow.c_embed(ctx, charname, ":page_with_curl:  기술 목록 ", info_)
 
 @slash.slash(name="공략", description='해당 캐릭터의 공략글을 보여줍니다.', guild_ids=guild_ids)
 async def g(ctx, charname):
@@ -159,27 +158,30 @@ async def g(ctx, charname):
     if charname in charlist:
         await blow.g_embed(ctx, charname)
     else:
-        embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
+        embed=discord.Embed(title=":warning: 해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
         await ctx.send(embed=embed)
 
 @slash.slash(name="랜덤", description='랜덤으로 아무 캐릭터나 뽑아줍니다.', guild_ids=guild_ids)
 async def r(ctx):
     choicechar = random.choice(charlist)
-    embed = discord.Embed(title="캐릭터 랜덤 선택 결과...", description=f'[{choicechar}] (이)가 나왔습니다.', color=0xb377ee)
+    embed = discord.Embed(title=":game_die: 캐릭터 랜덤 선택 결과...", description=f'[{choicechar}] (이)가 나왔습니다.', color=0xb377ee)
     await ctx.send(embed=embed)
 
 @slash.slash(name="깃허브", description='파스티바_봇의 깃허브 링크를 보여줍니다.', guild_ids=guild_ids)
 async def github(ctx):
-    embed = discord.Embed(title="파스티바_봇 깃허브 링크", description="https://github.com/crew852/GBVSbot", color=0xb377ee)
+    embed = discord.Embed(title=":technologist: 파스티바_봇 깃허브 링크", description="https://github.com/crew852/GBVSbot", color=0xb377ee)
     await ctx.send(embed=embed)
 
 @slash.slash(name="서버개수", description='(개발자기능)파스티바_봇이 가입된 서버의 수를 보여줍니다.', guild_ids=guild_ids)
 async def server_cnt(ctx):
-    ch = 0
-    for g in bot.guilds:
-        ch += 1
-    embed = discord.Embed(title="파스티바_봇은 현재...", description=f'[{ch}] 개 서버에 가입되어 있습니다.', color=0xb377ee)
-    await ctx.send(embed=embed)
+    if str(ctx.messaage.author.id) == '평안' or str(ctx.messaage.author.id) == 'DEEPDIVE(잠수:p)':
+        ch = 0
+        for g in bot.guilds:
+            ch += 1
+        embed = discord.Embed(title="파스티바_봇은 현재...", description=f'[{ch}] 개 서버에 가입되어 있습니다.', color=0xb377ee)
+        await ctx.send(embed=embed)
+    else:
+        await ctx.send(embed=discord.Embed(title='이 명령을 실행할 권한이 없습니다.'))
 
 @slash.slash(name="서버목록", description='(개발자기능)파스티바_봇이 가입된 서버의 목록을 보여줍니다.', guild_ids=guild_ids)
 async def server_list(ctx):
