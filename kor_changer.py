@@ -27,7 +27,7 @@ def nor_cgr (command):
         command = "j.H"
     elif command == '점특':
         command = "j.U"
-    elif command == '5특':
+    elif command == '5특' or command == '특':
         command = "5U"
     elif command == '잡기':
         command = "TR"

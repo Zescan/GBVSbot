@@ -19,6 +19,10 @@ slash = SlashCommand(bot, sync_commands=True)
 charlist_path = os.path.dirname(os.path.abspath(__file__)) + "/캐릭목록.txt"
 o = open(charlist_path, "r", encoding="utf-8")
 charlist = o.read().split()
+# 중립 기본기
+ncom_path = os.path.dirname(os.path.abspath(__file__)) + "/5command.txt"
+u = open(ncom_path, "r", encoding="utf-8")
+ncomlist = u.read().split()
 # 서버아이디
 guild_ids = bot.guilds
 #database
@@ -114,26 +118,29 @@ async def i(ctx, charname, command):
         command = kcg.com_cgr(command)
     print(charname)
     print(command)
-    if '.'in command:
-        pass
-    else:
-        command = command.upper()
-    query_str = "WHERE charname = '" + charname + "' AND command = '" + command + "'"
-    print(query_str)
-    rows = db.db_table(dab,query_str)
-    if not rows:
-        embed=discord.Embed(title=":warning: 해당하는 정보를 찾을 수 없습니다", description="파스티바_봇 사용 가이드 : https://gall.dcinside.com/m/granvs/64822", color=0xedf11e)
+    if command in ncomlist:
+        embed=discord.Embed(title=":warning: 중립 기본기는 근/원거리 구분을 해서 검색해주세요", description="예시) `근약`, `c.l`, `원강`, `f.h`", color=0xedf11e)
         await ctx.send(embed=embed)
     else:
-        row = rows[0]
-        info_dic = {'데미지': row[3],
-        '가드판정': row[4],
-        '시동 프레임': row[5],
-        '지속 프레임': row[6],
-        '회수 프레임': row[7],
-        '가드시 이득': row[8],
-        '히트시 이득': row[9]}
-        await blow.t_embed(ctx, charname + " - " + command, row[2], info_dic, row[10], row[11])
+        if '.'in command:
+            pass
+        else:
+            command = command.upper()
+        query_str = "WHERE charname = '" + charname + "' AND command = '" + command + "'"
+        rows = db.db_table(dab,query_str)
+        if not rows:
+            embed=discord.Embed(title=":warning: 해당하는 정보를 찾을 수 없습니다", description="파스티바_봇 사용 가이드 : https://gall.dcinside.com/m/granvs/64822", color=0xedf11e)
+            await ctx.send(embed=embed)
+        else:
+            row = rows[0]
+            info_dic = {'데미지': row[3],
+            '가드판정': row[4],
+            '시동 프레임': row[5],
+            '지속 프레임': row[6],
+            '회수 프레임': row[7],
+            '가드시 이득': row[8],
+            '히트시 이득': row[9]}
+            await blow.t_embed(ctx, charname + " - " + command, row[2], info_dic, row[10], row[11])
 
 @slash.slash(name='기술', description='해당 캐릭터의 기술 목록을 보여줍니다.', guild_ids=guild_ids)
 async def m(ctx, character):

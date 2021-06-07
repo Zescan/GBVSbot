@@ -19,6 +19,8 @@ def cgr (sk):
         sk = 'j.H'
     elif sk == 'ju' or sk =='j.u':
         sk = 'j.U'
+    elif sk == 'u' or sk == 'U':
+        sk == '5U'
     elif sk == 'jtr' or sk =='j.tr':
         sk = 'j.TR'
     elif sk == 'j360l' or sk =='j.360l':
