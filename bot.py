@@ -1,6 +1,7 @@
 import discord
 from discord_slash import SlashCommand
 from dotenv import load_dotenv
+from discord.ext import commands
 
 import os
 import asyncio
@@ -15,8 +16,13 @@ import embed as blow
 import changer as cg
 import kor_changer as kcg
 
+import logging 
+
+logging.basicConfig(level=logging.WARNING)
+
 bot = discord.Client(intents=discord.Intents.all())
 slash = SlashCommand(bot, sync_commands=True)
+cmdbot = commands.Bot(command_prefix="/")
 # 캐릭 목록
 charlist_path = os.path.dirname(os.path.abspath(__file__)) + "/캐릭목록.txt"
 o = open(charlist_path, "r", encoding="utf-8")
@@ -33,13 +39,59 @@ async def on_ready():
     print(bot.user.name)
     print('connection was succesful')
     await bot.change_presence(status=discord.Status.online, activity=discord.Game("'/명령어'로 기능확인"))
+    
+@bot.event 
+async def on_message(message):
+    logging.info("message : ")
+    logging.info(message)
+    logging.info("message.content : " + message.content)
+    arr = message.content.split()
+    logging.debug(arr)
+    first = ""
+    if len(arr) > 0:
+        first = arr[0].replace("/", "")
+    charname = ""
+    if len(arr) > 1:
+        charname = arr[1]
+    command = ""
+    if len(arr) > 2:
+        command = arr[2]
+    ctx = message.channel
+    if first == "명령어": 
+        await _list(ctx)
+    elif first == "설명서":
+        await _tip(ctx)
+    elif first == "핑":
+        await _ping(ctx)
+    elif first == "랜덤":
+        await _random(ctx)
+    elif first == "캐릭터":
+        await _char(ctx)
+    elif first == "기술":
+        await _skill(ctx, charname)
+    elif first == "공략":
+        await _walkthrough(ctx, charname)
+    elif first == "검색":
+        await _search(ctx, charname, command)
+    elif first == "깃허브":
+        await _github(ctx)
+    else :
+        raise
 
 
+# TODO 이게 뭘 하는 건지 파악해야 함. 
+@cmdbot.command()
+async def pass_normal(ctx):
+    logging.info("ctx : " + ctx)
+    pass
 # commands
 
 
 @slash.slash(name="명령어", description='명령어 목록을 보여줍니다.', guild_ids=guild_ids)
 async def list(ctx):
+    await _list(ctx)
+
+async def _list(ctx):
     embed=discord.Embed(title='명령어 목록', description='-괄호 안의 인자도 같이 써주세요!', color=0xfd4949)
     embed.add_field(name='/설명서', value='파스티바_봇 사용설명서를 보여줍니다.', inline=False)
     embed.add_field(name='/핑', value='현재 핑 상태를 측정합니다.', inline=False)
@@ -53,12 +105,18 @@ async def list(ctx):
 
 @slash.slash(name="핑", description='현재 핑 상태를 측정합니다.', guild_ids=guild_ids)
 async def ping(ctx):
+    await _ping(ctx)
+
+async def _ping(ctx):
     latancy = bot.latency
     embed=discord.Embed(title='현재 ping상태는...', description=f'{round(latancy * 1000)}ms 입니다.', color=0xfd4949)
     await ctx.send(embed=embed)
 
 @slash.slash(name="설명서", description='파스티바_봇 사용설명서를 보여줍니다.', guild_ids=guild_ids)
 async def tip(ctx):
+    await _tip(ctx)
+
+async def _tip(ctx):
     embed=discord.Embed(title="파스티바_봇 사용 설명서", description="제작 - Rolling_Pumpkin", color=0x44e456)
     embed.add_field(name="#프레임데이터", value="파스티바_봇은 Dustloop wiki 에서 프레임 데이터를 가져왔습니다", inline=False)
     embed.add_field(name="#대,소문자", value="검색기능을 영어로 이용하실 때는 가능한 모두 소문자로 입력해주세요", inline=False)
@@ -73,6 +131,9 @@ async def tip(ctx):
 
 @slash.slash(name="캐릭터", description='캐릭터들 목록과 영문 이름을 보여줍니다.', guild_ids=guild_ids)
 async def char(ctx):
+    await _char(ctx)
+
+async def _char(ctx):
     embed=discord.Embed(title="캐릭터 리스트", description="현재 검색 가능한 캐릭터 목록입니다.", color=0x6b9fff)
     embed.add_field(name="그랑", value="Gran", inline=True)
     embed.add_field(name="나루메아", value="Narmaya", inline=True)
@@ -99,6 +160,9 @@ async def char(ctx):
 
 @slash.slash(name="검색", description='해당 캐릭터의 기술의 프레임데이터를 보여줍니다.', guild_ids=guild_ids)
 async def i(ctx, charname, command):
+    await _search(ctx, charname, command)
+
+async def _search(ctx, charname, command):
     charname = ncg.ncgr(charname)
     charname = charname.capitalize()
     # command = command.lower()
@@ -135,6 +199,9 @@ async def i(ctx, charname, command):
         
 @slash.slash(name='기술', description='해당 캐릭터의 기술 목록을 보여줍니다.', guild_ids=guild_ids)
 async def m(ctx, character):
+    await _skill(ctx, character)
+
+async def _skill(ctx, character):
     character = ncg.ncgr(character)
     charname = character.capitalize()
     print(charname)
@@ -152,6 +219,9 @@ async def m(ctx, character):
 
 @slash.slash(name="공략", description='해당 캐릭터의 공략글을 보여줍니다.', guild_ids=guild_ids)
 async def g(ctx, charname):
+    await _walkthrough(ctx, charname)
+
+async def _walkthrough(ctx, charname):
     charname = ncg.rncgr(charname)
     if charname in charlist:
         await blow.g_embed(ctx, charname)
@@ -161,12 +231,18 @@ async def g(ctx, charname):
 
 @slash.slash(name="랜덤", description='랜덤으로 아무 캐릭터나 뽑아줍니다.', guild_ids=guild_ids)
 async def r(ctx):
+    await _random(ctx)
+
+async def _random(ctx):
     choicechar = random.choice(charlist)
     embed = discord.Embed(title="캐릭터 랜덤 선택 결과...", description=f'[{choicechar}] (이)가 나왔습니다.', color=0xb377ee)
     await ctx.send(embed=embed)
 
 @slash.slash(name="깃허브", description='파스티바_봇의 깃허브 링크를 보여줍니다.', guild_ids=guild_ids)
 async def github(ctx):
+    await _github(ctx)
+
+async def _github(ctx):
     embed = discord.Embed(title="파스티바_봇 깃허브 링크", description="https://github.com/crew852/GBVSbot", color=0xb377ee)
     await ctx.send(embed=embed)
 
