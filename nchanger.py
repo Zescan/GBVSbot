@@ -1,4 +1,5 @@
 def ncgr (charname):
+    charname = charname.strip()
     if charname.startswith('그'):
         charname = "gran"
     elif charname.startswith('퍼'):
