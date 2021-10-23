@@ -42,7 +42,7 @@ def ncgr (charname):
         charname = "yuel"
     elif charname.startswith('유스'):
         charname = "Eustace"
-    elif charname.startswith("식"):
+    elif charname.startswith("식") or charname.startswith("시"):
         charname = "Seox"
     return charname
 
