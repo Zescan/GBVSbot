@@ -42,6 +42,8 @@ def ncgr (charname):
         charname = "yuel"
     elif charname.startswith('유스'):
         charname = "Eustace"
+    elif charname.startswith("식"):
+        charname = "Seox"
     return charname
 
 def rncgr (charname):
@@ -87,4 +89,6 @@ def rncgr (charname):
         charname = "유엘"
     elif charname == 'Eustace':
         charname = "유스테스"
+    elif charname == "Seox":
+        charname == "시스"
     return charname
