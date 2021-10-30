@@ -184,7 +184,7 @@ async def _search(ctx, charname, command):
     print(query_str)
     rows = db.db_table(dab,query_str)
     if not rows:
-        embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
+        embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="* 기술 목록을 확인해주세요. * X 및 L/M/H을 바꿔 입력해주세요.", color=0xedf11e)
         await ctx.send(embed=embed)
     else:
         row = rows[0]
