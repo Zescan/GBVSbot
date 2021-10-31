@@ -18,7 +18,7 @@ import kor_changer as kcg
 
 import logging 
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.DEBUG)
 
 bot = discord.Client(intents=discord.Intents.all())
 slash = SlashCommand(bot, sync_commands=True)
@@ -206,7 +206,7 @@ async def _skill(ctx, character):
     charname = character.capitalize()
     print(charname)
     query_ = "WHERE charname = '" + charname + "'"
-    rows = db.db_sktable(dbb,query_)
+    rows = db.db_sktable(dab,query_)
     if not rows:
         embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
         await ctx.send(embed=embed)
