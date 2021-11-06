@@ -189,15 +189,15 @@ async def _search(ctx, charname, command):
         embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="* 기술 목록을 확인해주세요. * X 및 L/M/H을 바꿔 입력해주세요.", color=0xedf11e)
         await ctx.send(embed=embed)
     else:
-        row = rows[0]
-        info_dic = {'데미지': row[3],
-        '가드판정': row[4],
-        '시동 프레임': row[5],
-        '지속 프레임': row[6],
-        '회수 프레임': row[7],
-        '가드시 이득': row[8],
-        '히트시 이득': row[9]}
-        await blow.t_embed(ctx, charname + " - " + command, row[2], info_dic, row[10], row[11])
+        for row in rows:
+            info_dic = {'데미지': row[3],
+            '가드판정': row[4],
+            '시동 프레임': row[5],
+            '지속 프레임': row[6],
+            '회수 프레임': row[7],
+            '가드시 이득': row[8],
+            '히트시 이득': row[9]}
+            await blow.t_embed(ctx, charname + " - " + command, row[2], info_dic, row[10], row[11])
         
 @slash.slash(name='기술', description='해당 캐릭터의 기술 목록을 보여줍니다.', guild_ids=guild_ids)
 async def m(ctx, character):
