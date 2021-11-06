@@ -6,9 +6,9 @@ import asyncio
 
 async def t_embed(channel, title, description, data, icon, image):
   embed = discord.Embed(title=title, description=description, color=0xfd4949)
-  if icon.lower().find("http") > -1:
+  if icon and icon.lower().find("http") > -1:
     embed.set_thumbnail(url = icon)
-  if image.lower().find("http") > -1:
+  if image and image.lower().find("http") > -1:
     embed.set_image(url = image)
   for info_key in data:
     if info_key == '가드판정':
