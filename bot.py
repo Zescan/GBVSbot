@@ -205,7 +205,7 @@ async def _skill(ctx, character):
     character = ncg.ncgr(character)
     charname = character.capitalize()
     print(charname)
-    query_ = "WHERE charname = '" + charname + "'"
+    query_ = "WHERE charname = '" + charname + "' order by odr"
     rows = db.db_sktable(dab,query_)
     if not rows:
         embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
