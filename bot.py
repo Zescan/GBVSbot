@@ -162,10 +162,12 @@ async def _char(ctx):
 async def i(ctx, charname, command):
     await _search(ctx, charname, command)
 
-async def _search(ctx, charname, command):
+async def _search(ctx, charname, string):
     charname = ncg.ncgr(charname)
+    ko_name = ncg.rncgr(charname)
     charname = charname.capitalize()
-    # command = command.lower()
+    skname = string.strip()
+    command = string.strip()
     command = cg.cgr(command)
     command = kcg.nor_cgr(command)
     k = '12'
@@ -182,7 +184,7 @@ async def _search(ctx, charname, command):
     print(command)    
     query_str = ""
     query_str += "WHERE charname = '" + charname + "' " 
-    query_str += "AND case when command = '" + command + "' or skname like '" + command + "' then 1 end is not null "
+    query_str += "AND case when command = '" + command + "' or skname like '" + skname + "' then 1 end is not null "
     print(query_str)
     rows = db.db_table(dab,query_str)
     if not rows:
@@ -197,7 +199,7 @@ async def _search(ctx, charname, command):
             '회수 프레임': row[7],
             '가드시 이득': row[8],
             '히트시 이득': row[9]}
-            await blow.t_embed(ctx, charname + " - " + command, row[2], info_dic, row[10], row[11])
+            await blow.t_embed(ctx, ko_name + " - " + skname + "(" + row[1] +")", row[2], info_dic, row[10], row[11])
         
 @slash.slash(name='기술', description='해당 캐릭터의 기술 목록을 보여줍니다.', guild_ids=guild_ids)
 async def m(ctx, character):
@@ -205,6 +207,7 @@ async def m(ctx, character):
 
 async def _skill(ctx, character):
     character = ncg.ncgr(character)
+    ko_name = ncg.rncgr(character)
     charname = character.capitalize()
     print(charname)
     query_ = "WHERE charname = '" + charname + "' order by odr"
@@ -217,13 +220,14 @@ async def _skill(ctx, character):
         for row in rows:
             info_['기술명'].append(row[1])
             info_['커맨드'].append(row[2])
-        await blow.c_embed(ctx, charname, " 기술 목록 ", info_)
+        await blow.c_embed(ctx, ko_name, " 기술 목록 ", info_)
 
 @slash.slash(name="공략", description='해당 캐릭터의 공략글을 보여줍니다.', guild_ids=guild_ids)
 async def g(ctx, charname):
     await _walkthrough(ctx, charname)
 
 async def _walkthrough(ctx, charname):
+    charname = ncg.ncgr(charname)
     charname = ncg.rncgr(charname)
     if charname in charlist:
         await blow.g_embed(ctx, charname)
