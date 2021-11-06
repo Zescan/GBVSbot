@@ -55,7 +55,7 @@ async def on_message(message):
         charname = arr[1]
     command = ""
     if len(arr) > 2:
-        command = arr[2]
+        command = message.content.replace(first, "").replace(charname, "").strip()
     ctx = message.channel
     if first == "명령어": 
         await _list(ctx)
@@ -180,7 +180,9 @@ async def _search(ctx, charname, command):
         for dot in match.groups():
             command = command.replace(dot, dot.lower(), 1)
     print(command)    
-    query_str = "WHERE charname = '" + charname + "' AND command = '" + command + "'"
+    query_str = ""
+    query_str += "WHERE charname = '" + charname + "' " 
+    query_str += "AND case when command = '" + command + "' or skname like '" + command + "' then 1 end is not null "
     print(query_str)
     rows = db.db_table(dab,query_str)
     if not rows:
