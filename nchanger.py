@@ -41,9 +41,9 @@ def ncgr (charname):
     elif charname == '유엘':
         charname = "yuel"
     elif charname.startswith('유스'):
-        charname = "Eustace"
+        charname = "eustace"
     elif charname.startswith("식") or charname.startswith("시"):
-        charname = "Seox"
+        charname = "seox"
     return charname
 
 def rncgr (charname):
@@ -87,8 +87,8 @@ def rncgr (charname):
         charname = "칼리오스트로"
     elif charname == 'yuel':
         charname = "유엘"
-    elif charname == 'Eustace':
+    elif charname == 'eustace':
         charname = "유스테스"
-    elif charname == "Seox":
+    elif charname == "seox":
         charname == "시스"
     return charname
