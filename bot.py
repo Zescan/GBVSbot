@@ -16,7 +16,7 @@ import embed as blow
 import changer as cg
 import kor_changer as kcg
 
-import logging 
+import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -42,9 +42,8 @@ async def on_ready():
     
 @bot.event 
 async def on_message(message):
-    logging.info("message : ")
-    logging.info(message)
-    logging.info("message.content : " + message.content)
+    logging.debug(message)
+    logging.debug(message.content)
     arr = message.content.split()
     logging.debug(arr)
     first = ""
@@ -166,22 +165,29 @@ async def _search(ctx, charname, string):
     charname = ncg.ncgr(charname)
     ko_name = ncg.rncgr(charname)
     charname = charname.capitalize()
+    logging.debug(charname)
     skname = string.strip()
+    logging.info("커맨드 확인")
     command = string.strip()
+    logging.debug(command)
     command = cg.cgr(command)
+    logging.debug(command)
     command = kcg.nor_cgr(command)
+    logging.debug(command)
     k = '12'
     for j in k:
+        logging.debug(j)
         command = kcg.com_cgr(command)
-    command = kcg.sknm_cgr(command)
-    print(charname)
+        logging.debug(command)
+    #print(charname)
     command = command.upper()
+    logging.debug(command)
     match = re.search(r"(.\.)", command)
     if match:
         #print(match.groups())
         for dot in match.groups():
             command = command.replace(dot, dot.lower(), 1)
-    print(command)    
+            logging.debug(command)
     query_str = ""
     query_str += "WHERE charname = '" + charname + "' " 
     query_str += "AND case when command = '" + command + "' or skname like '" + skname + "' then 1 end is not null "
