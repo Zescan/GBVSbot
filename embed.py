@@ -2,21 +2,41 @@ import discord
 from discord import embeds
 import numpy as np
 import asyncio
+import logging
+import re
 
+#logging.basicConfig(level=logging.DEBUG)
 
 async def t_embed(channel, title, description, data, icon, image):
   embed = discord.Embed(title=title, description=description, color=0xfd4949)
   if icon and icon.lower().find("http") > -1:
     embed.set_thumbnail(url = icon)
-  if image and image.lower().find("http") > -1:
-    embed.set_image(url = image)
+  #if image and image.lower().find("http") > -1:
+  #  embed.set_image(url = image)
   for info_key in data:
     if info_key == '가드판정':
         embed.add_field(name=info_key, value="```" + str(data[info_key]) + "```", inline=False)
     else:
         embed.add_field(name=info_key, value="```" + str(data[info_key]) + "```", inline=True)
+  messages = []
   message = await channel.send(embed=embed)
-  return message
+  messages.append(message)
+  if image and image.lower().find("http") > -1:
+    images = re.split("[\s,]+", image)
+    logging.debug(images)
+    for idx in range(0, len(images)):
+        #embed.set_image(url = images[idx])
+        #if idx == 0:
+        #    embed.set_image(url = images[idx])
+        #else:
+        #    embed.add_field(name="추가 이미지", value=images[idx], inline=False)
+        imgEmbed = discord.Embed(title="", color=0xfd4949)
+        imgEmbed.add_field(name="기술 이미지", value=(idx+1), inline=False)
+        imgEmbed.set_image(url = images[idx])
+        message = await channel.send(embed = imgEmbed)
+        messages.append(message)
+  #message = await channel.send(embed=embed)
+  return messages
 
 async def c_embed(channel, title, description, data):
   embed = discord.Embed(title=title, description=description, color=0xf3fd68)
