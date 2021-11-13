@@ -54,7 +54,7 @@ async def on_message(message):
         charname = arr[1]
     command = ""
     if len(arr) > 2:
-        command = message.content.replace(first, "").replace(charname, "").strip()
+        command = message.content.replace(first, "", 1).replace(charname, "", 1).strip()
     ctx = message.channel
     if first == "명령어": 
         await _list(ctx)
@@ -166,6 +166,7 @@ async def _search(ctx, charname, string):
     ko_name = ncg.rncgr(charname)
     charname = charname.capitalize()
     logging.debug(charname)
+    logging.debug(string)
     skname = string.strip()
     logging.info("커맨드 확인")
     command = string.strip()
@@ -189,8 +190,8 @@ async def _search(ctx, charname, string):
             command = command.replace(dot, dot.lower(), 1)
             logging.debug(command)
     query_str = ""
-    query_str += "WHERE charname = '" + charname + "' " 
-    query_str += "AND case when command = '" + command + "' or skname like '" + skname + "' then 1 end is not null "
+    query_str += "WHERE trim(charname) = '" + charname + "' " 
+    query_str += "AND case when trim(command) = '" + command + "' or trim(skname) like '" + skname + "' then 1 end is not null "
     print(query_str)
     rows = db.db_table(dab,query_str)
     if not rows:
