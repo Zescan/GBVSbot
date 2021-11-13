@@ -18,7 +18,7 @@ import kor_changer as kcg
 
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARNING)
 
 bot = discord.Client(intents=discord.Intents.all())
 slash = SlashCommand(bot, sync_commands=True)
@@ -30,8 +30,12 @@ charlist = o.read().split()
 # 서버아이디
 guild_ids = bot.guilds
 #database
-dab = sqlite3.connect("./framedata.db")
+#dab = sqlite3.connect("./framedata.db")
+dab = None
 dbb = sqlite3.connect("sklist.db")
+
+def getDB():
+    return sqlite3.connect("./framedata.db")
 
 @bot.event
 async def on_ready():
@@ -193,6 +197,8 @@ async def _search(ctx, charname, string):
     query_str += "WHERE trim(charname) = '" + charname + "' " 
     query_str += "AND case when trim(command) = '" + command + "' or trim(skname) like '" + skname + "' then 1 end is not null "
     print(query_str)
+    #dab = sqlite3.connect("./framedata.db")
+    dab = getDB()
     rows = db.db_table(dab,query_str)
     if not rows:
         embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="* 기술 목록을 확인해주세요. * X 및 L/M/H을 바꿔 입력해주세요.", color=0xedf11e)
@@ -218,6 +224,7 @@ async def _skill(ctx, character):
     charname = character.capitalize()
     print(charname)
     query_ = "WHERE charname = '" + charname + "' order by odr"
+    dab = getDB()
     rows = db.db_sktable(dab,query_)
     if not rows:
         embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
