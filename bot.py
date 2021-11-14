@@ -201,7 +201,8 @@ async def _search(ctx, charname, string):
     dab = getDB()
     rows = db.db_table(dab,query_str)
     if not rows:
-        embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="* 기술 목록을 확인해주세요. * X 및 L/M/H을 바꿔 입력해주세요.", color=0xedf11e)
+        await _skill(ctx, charname)
+        embed=discord.Embed(title="검색 [캐릭 이름] [커맨드/시술명]", description="해당하는 정보를 찾을 수 없습니다. 위와 같이 입력해주세요.", color=0xedf11e)
         await ctx.send(embed=embed)
     else:
         for row in rows:
