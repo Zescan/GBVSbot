@@ -230,10 +230,10 @@ async def _skill(ctx, character):
         embed=discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
         await ctx.send(embed=embed)
     else:
-        info_ = {'기술명': [], '커맨드': []}
+        info_ = {'커맨드': [], '기술명': []}
         for row in rows:
-            info_['기술명'].append(row[1])
-            info_['커맨드'].append(row[2])
+            info_['커맨드'].append(row[1])
+            info_['기술명'].append(row[2])
         await blow.c_embed(ctx, ko_name, " 기술 목록 ", info_)
 
 @slash.slash(name="공략", description='해당 캐릭터의 공략글을 보여줍니다.', guild_ids=guild_ids)
