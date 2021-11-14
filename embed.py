@@ -40,13 +40,46 @@ async def t_embed(channel, title, description, data, icon, image):
 
 async def c_embed(channel, title, description, data):
   embed = discord.Embed(title=title, description=description, color=0xf3fd68)
-  for info_key in data:
-    value_str = ''
-    for obj in data[info_key]:
-      value_str += '\n' + obj
-    embed.add_field(name=info_key, value="```" + value_str + "```", inline=True)
+  messages = []
   message = await channel.send(embed=embed)
-  return message
+  messages.append(message)
+  command = None
+  skname = None 
+  #for info_key in data:
+    #value_str = ''
+    #for obj in data[info_key]:
+      #value_str += '\n' + obj
+    #embed.add_field(name=info_key, value="```" + value_str + "```", inline=True)
+    #embed.add_field(name=info_key, value="-", inline=True)
+  #embed.add_field(name="커맨드", value="기술명", inline=True)
+  #embed.add_field(name="기술명", value="-", inline=True)
+  #messages = []
+  #message = await channel.send(embed=embed)
+  #messages.append(message)
+  embed = discord.Embed(color=0xf3fd68)
+  commands = data["커맨드"]
+  sknames = data["기술명"]
+  lst = ""
+  for idx in range(0, len(commands)):
+    command = commands[idx]
+    skname = sknames[idx]
+    if idx%20 == 19:
+        message = await channel.send(embed=embed)
+        messages.append(message)
+        embed = discord.Embed(color=0xf3fd68)
+    #subEmbed = discord.Embed(color=0xf3fd68)
+    embed.add_field(name=command, value=skname, inline=False)
+    #embed.add_field(name="-", value=command + "\t\t" + skname, inline=True)
+    #message = await channel.send(embed=subEmbed)
+    #messages.append(message)
+    #lst +=(command + "\t\t" + skname + "\n")
+  #messages = []
+  #embed.add_field(name="-", value=lst, inline=True)
+  message = await channel.send(embed=embed)
+  messages.append(message)
+  #for info_key in data:
+  #  
+  return messages
   
 async def g_embed(channel, title):
   embed = discord.Embed(title = title, description = '공략글', color=0x00bd26)
