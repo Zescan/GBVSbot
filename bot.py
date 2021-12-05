@@ -205,6 +205,37 @@ async def _search(ctx, charname, string):
         embed=discord.Embed(title="검색 [캐릭 이름] [커맨드/시술명]", description="해당하는 정보를 찾을 수 없습니다. 위와 같이 입력해주세요.", color=0xedf11e)
         await ctx.send(embed=embed)
     else:
+        col=0
+        CHARNAME=col
+        col += 1
+        COMMAND=col
+        col += 1
+        SKNAME=col
+        col += 1
+        DAMAGE=col
+        col += 1
+        GUARD=col
+        col += 1
+        STARTUP=col
+        col += 1
+        ACTIVE=col
+        col += 1
+        RECOVERY=col
+        col += 1
+        ONBLOCK=col
+        col += 1
+        ONHIT=col
+        col += 1
+        ICON=col
+        col += 1
+        IMAGE=col
+        col += 1
+        ODR=col
+        col += 1
+        ATTACK_LEVEL=col
+        col += 1
+        CLASH_LEVEL=col
+        col += 1
         for row in rows:
             info_dic = {'데미지': row[3],
             '가드판정': row[4],
@@ -212,7 +243,10 @@ async def _search(ctx, charname, string):
             '지속 프레임': row[6],
             '회수 프레임': row[7],
             '가드시 이득': row[8],
-            '히트시 이득': row[9]}
+            '히트시 이득': row[9], 
+            '공격레벨' : row[ATTACK_LEVEL], 
+            '상쇄레벨' : row[CLASH_LEVEL], 
+            }
             await blow.t_embed(ctx, ko_name + " - " + row[1], row[2], info_dic, row[10], row[11])
         
 @slash.slash(name='기술', description='해당 캐릭터의 기술 목록을 보여줍니다.', guild_ids=guild_ids)
