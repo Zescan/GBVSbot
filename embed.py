@@ -14,7 +14,7 @@ async def t_embed(channel, title, description, data, icon, image):
   #if image and image.lower().find("http") > -1:
   #  embed.set_image(url = image)
   for info_key in data:
-    if info_key == '가드판정':
+    if info_key == '가드판정' or info_key == '히트시 이득':
         embed.add_field(name=info_key, value="```" + str(data[info_key]) + "```", inline=False)
     else:
         embed.add_field(name=info_key, value="```" + str(data[info_key]) + "```", inline=True)
