@@ -11,7 +11,7 @@ from discord_slash import SlashCommand
 from dotenv import load_dotenv
 
 import blow
-import changer as cg
+import changer
 import db
 import kor_changer as kcg
 import nchanger
@@ -185,7 +185,7 @@ async def _search(ctx, charname, string):
 		logging.info("커맨드 확인")
 		command = string.strip()
 		logging.debug(command)
-		command = cg.cgr(command)
+		command = changer.cgr(command)
 		logging.debug(command)
 		command = kcg.nor_cgr(command)
 		logging.debug(command)
