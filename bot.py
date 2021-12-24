@@ -12,7 +12,7 @@ import re
 
 import nchanger
 import db
-import embed as blow
+import blow
 import changer as cg
 import kor_changer as kcg
 
