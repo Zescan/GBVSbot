@@ -4,10 +4,12 @@ import numpy as np
 import asyncio
 import logging
 import re
+import warnings
 
 #logging.basicConfig(level=logging.DEBUG)
 
 async def t_embed(channel, title, description, data, icon, image):
+    warnings.warn("deprecated");
   embed = discord.Embed(title=title, description=description, color=0xfd4949)
   if icon and icon.lower().find("http") > -1:
     embed.set_thumbnail(url = icon)
@@ -39,6 +41,7 @@ async def t_embed(channel, title, description, data, icon, image):
   return messages
 
 async def c_embed(channel, title, description, data):
+    warnings.warn("deprecated");
   embed = discord.Embed(title=title, description=description, color=0xf3fd68)
   messages = []
   message = await channel.send(embed=embed)
