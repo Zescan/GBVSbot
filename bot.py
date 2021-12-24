@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 import blow
 import changer
 import db
-import kor_changer as kcg
+import kor_changer
 import nchanger
 import numpy as np
 
@@ -187,12 +187,12 @@ async def _search(ctx, charname, string):
 		logging.debug(command)
 		command = changer.cgr(command)
 		logging.debug(command)
-		command = kcg.nor_cgr(command)
+		command = kor_changer.nor_cgr(command)
 		logging.debug(command)
 		k = '12'
 		for j in k:
 				logging.debug(j)
-				command = kcg.com_cgr(command)
+				command = kor_changer.com_cgr(command)
 				logging.debug(command)
 		# print(charname)
 		command = command.upper()
