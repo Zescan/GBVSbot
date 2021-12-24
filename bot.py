@@ -10,7 +10,7 @@ import random
 import sqlite3
 import re
 
-import nchanger as ncg
+import nchanger
 import db
 import embed as blow
 import changer as cg
@@ -166,8 +166,8 @@ async def i(ctx, charname, command):
     await _search(ctx, charname, command)
 
 async def _search(ctx, charname, string):
-    charname = ncg.ncgr(charname)
-    ko_name = ncg.rncgr(charname)
+    charname = nchanger.ncgr(charname)
+    ko_name = nchanger.rncgr(charname)
     charname = charname.capitalize()
     logging.debug(charname)
     logging.debug(string)
@@ -254,8 +254,8 @@ async def m(ctx, character):
     await _skill(ctx, character)
 
 async def _skill(ctx, character):
-    character = ncg.ncgr(character)
-    ko_name = ncg.rncgr(character)
+    character = nchanger.ncgr(character)
+    ko_name = nchanger.rncgr(character)
     charname = character.capitalize()
     print(charname)
     query_ = "WHERE charname = '" + charname + "' order by odr"
@@ -276,8 +276,8 @@ async def g(ctx, charname):
     await _walkthrough(ctx, charname)
 
 async def _walkthrough(ctx, charname):
-    charname = ncg.ncgr(charname)
-    charname = ncg.rncgr(charname)
+    charname = nchanger.ncgr(charname)
+    charname = nchanger.rncgr(charname)
     if charname in charlist:
         await blow.g_embed(ctx, charname)
     else:
