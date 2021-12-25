@@ -146,28 +146,31 @@ async def char(ctx):
 
 
 async def _char(ctx):
-		embed = discord.Embed(title="캐릭터 리스트", description="현재 검색 가능한 캐릭터 목록입니다.", color=0x6b9fff)
-		embed.add_field(name="그랑", value="Gran", inline=True)
-		embed.add_field(name="나루메아", value="Narmaya", inline=True)
-		embed.add_field(name="랜슬롯", value="Lancelot", inline=True)
-		embed.add_field(name="로아인", value="Lowain", inline=True)
-		embed.add_field(name="메테라", value="Metera", inline=True)
-		embed.add_field(name="바자라가", value="Vaseraga", inline=True)
-		embed.add_field(name="벨리알", value="Belial", inline=True)
-		embed.add_field(name="벨제붑", value="Beelzebub", inline=True)
-		embed.add_field(name="샤를로테", value="Charlotta", inline=True)
-		embed.add_field(name="소리즈", value="Soriz", inline=True)
-		embed.add_field(name="우노", value="Anre", inline=True)
-		embed.add_field(name="유스테스", value="Eustace", inline=True)
-		embed.add_field(name="유엘", value="Yuel", inline=True)
-		embed.add_field(name="제타", value="Zeta", inline=True)
-		embed.add_field(name="조이", value="Zooey", inline=True)
-		embed.add_field(name="지타", value="Djeeta", inline=True)
-		embed.add_field(name="카타리나", value="Katalina", inline=True)
-		embed.add_field(name="칼리오스트로", value="Cagliostro", inline=True)
-		embed.add_field(name="파스티바", value="Ladiva", inline=True)
-		embed.add_field(name="퍼시벌", value="Percival", inline=True)
-		embed.add_field(name="페리", value="Ferry", inline=True)
+		embed = discord.Embed(title="캐릭터 리스트", description="현재 검색 가능한 캐릭터(한글 가나다순) 목록입니다.", color=0x6b9fff)
+		for row in db.char():
+			embed.add_field(name=row['name_ko'], value=row['charname'], inline=False)
+	 # embed.add_field(name=row['name_ko'], value=row['charname'], inline=False)
+	# embed.add_field(name="그랑", value="Gran", inline=True)
+	# embed.add_field(name="나루메아", value="Narmaya", inline=True)
+	# embed.add_field(name="랜슬롯", value="Lancelot", inline=True)
+	# embed.add_field(name="로아인", value="Lowain", inline=True)
+	# embed.add_field(name="메테라", value="Metera", inline=True)
+	# embed.add_field(name="바자라가", value="Vaseraga", inline=True)
+	# embed.add_field(name="벨리알", value="Belial", inline=True)
+	# embed.add_field(name="벨제붑", value="Beelzebub", inline=True)
+	# embed.add_field(name="샤를로테", value="Charlotta", inline=True)
+	# embed.add_field(name="소리즈", value="Soriz", inline=True)
+	# embed.add_field(name="우노", value="Anre", inline=True)
+	# embed.add_field(name="유스테스", value="Eustace", inline=True)
+	# embed.add_field(name="유엘", value="Yuel", inline=True)
+	# embed.add_field(name="제타", value="Zeta", inline=True)
+	# embed.add_field(name="조이", value="Zooey", inline=True)
+	# embed.add_field(name="지타", value="Djeeta", inline=True)
+	# embed.add_field(name="카타리나", value="Katalina", inline=True)
+	# embed.add_field(name="칼리오스트로", value="Cagliostro", inline=True)
+	# embed.add_field(name="파스티바", value="Ladiva", inline=True)
+	# embed.add_field(name="퍼시벌", value="Percival", inline=True)
+	# embed.add_field(name="페리", value="Ferry", inline=True)
 		await ctx.send(embed=embed)
 
 
@@ -208,44 +211,44 @@ async def _search(ctx, charname, string):
 		query_str += "WHERE trim(charname) = '" + charname + "' "
 		query_str += "AND case when trim(command) = '" + command + "' or trim(skname) like '" + skname + "' then 1 end is not null "
 		print(query_str)
-  # dab = getDB()
+	# dab = getDB()
 		rows = db.db_table(query_str)
 		if not rows:
 				await _skill(ctx, charname)
 				embed = discord.Embed(title="검색 [캐릭 이름] [커맨드/시술명]", description="해당하는 정보를 찾을 수 없습니다. 위와 같이 입력해주세요.", color=0xedf11e)
 				await ctx.send(embed=embed)
 		else:
-    # col = 0
-    # CHARNAME = col
-    # col += 1
-    # COMMAND = col
-    # col += 1
-    # SKNAME = col
-    # col += 1
-    # DAMAGE = col
-    # col += 1
-    # GUARD = col
-    # col += 1
-    # STARTUP = col
-    # col += 1
-    # ACTIVE = col
-    # col += 1
-    # RECOVERY = col
-    # col += 1
-    # ONBLOCK = col
-    # col += 1
-    # ONHIT = col
-    # col += 1
-    # ICON = col
-    # col += 1
-    # IMAGE = col
-    # col += 1
-    # ODR = col
-    # col += 1
-    # ATTACK_LEVEL = col
-    # col += 1
-    # CLASH_LEVEL = col
-    # col += 1
+		# col = 0
+		# CHARNAME = col
+		# col += 1
+		# COMMAND = col
+		# col += 1
+		# SKNAME = col
+		# col += 1
+		# DAMAGE = col
+		# col += 1
+		# GUARD = col
+		# col += 1
+		# STARTUP = col
+		# col += 1
+		# ACTIVE = col
+		# col += 1
+		# RECOVERY = col
+		# col += 1
+		# ONBLOCK = col
+		# col += 1
+		# ONHIT = col
+		# col += 1
+		# ICON = col
+		# col += 1
+		# IMAGE = col
+		# col += 1
+		# ODR = col
+		# col += 1
+		# ATTACK_LEVEL = col
+		# col += 1
+		# CLASH_LEVEL = col
+		# col += 1
 				for row in rows:
 					info_dic = {'데미지': row['damage'],
 						'가드판정': row['guard'],
@@ -271,7 +274,7 @@ async def _skill(ctx, character):
 		charname = character.capitalize()
 		print(charname)
 		query_ = "WHERE charname = '" + charname + "' order by odr"
-  # dab = getDB()
+	# dab = getDB()
 		rows = db.db_sktable(query_)
 		if not rows:
 				embed = discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
