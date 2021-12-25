@@ -208,7 +208,7 @@ async def _search(ctx, charname, string):
 						command = command.replace(dot, dot.lower(), 1)
 						logging.debug(command)
 		query_str = ""
-		query_str += "WHERE trim(charname) = '" + charname + "' "
+		query_str += "WHERE case when '{charname}' in (trim(charname), trim(name_ko)) then 1 end is not null ".format(charname=charname)
 		query_str += "AND case when trim(command) = '" + command + "' or trim(skname) like '" + skname + "' then 1 end is not null "
 		print(query_str)
 	# dab = getDB()
@@ -273,7 +273,8 @@ async def _skill(ctx, character):
 		ko_name = nchanger.rncgr(character)
 		charname = character.capitalize()
 		print(charname)
-		query_ = "WHERE charname = '" + charname + "' order by odr"
+  # query_ = "WHERE charname = '" + charname + "' order by odr"
+		query_ = "WHERE case when '{charname}' in (trim(charname), trim(name_ko)) then 1 end is not null order by odr".format(charname=charname)
 	# dab = getDB()
 		rows = db.db_sktable(query_)
 		if not rows:
