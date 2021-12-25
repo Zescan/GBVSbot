@@ -250,7 +250,7 @@ async def _search(ctx, charname, string):
 		# CLASH_LEVEL = col
 		# col += 1
 				for row in rows:
-					info_dic = {'데미지': row['damage'],
+					info_dic = {'데미지': (row['damage'] or "-").replace("*", "x"),
 						'가드판정': row['guard_ko'] or row['guard'],
 						'시동 프레임': row['startup'],
 						'지속 프레임': row['active'],
@@ -260,7 +260,7 @@ async def _search(ctx, charname, string):
 						'공격레벨': row['attack_level'],
 						'상쇄레벨': row['clash_level'],
 						}
-					await blow.t_embed(ctx, ko_name + " - " + row['command'], row['move_name_ko'] or row['skname'], info_dic, row['icon'], row['image'])
+					await blow.t_embed(ctx, ko_name + " - " + row['command'], row['move_name_ko'] or row['skname'] or row['command'], info_dic, row['icon'], row['image'])
 
 
 @slash.slash(name='기술', description='해당 캐릭터의 기술 목록을 보여줍니다.', guild_ids=guild_ids)
@@ -284,7 +284,7 @@ async def _skill(ctx, character):
 				info_ = {'커맨드': [], '기술명': []}
 				for row in rows:
 						info_['커맨드'].append(row['command'])
-						info_['기술명'].append(row['move_name_ko'] or row['skname'])
+						info_['기술명'].append(row['move_name_ko'] or row['skname'] or row['command'])
 				await blow.c_embed(ctx, ko_name, " 기술 목록 ", info_)
 
 
