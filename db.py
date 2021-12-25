@@ -4,9 +4,8 @@ import warnings
 
 # print(sqlite3.version)
 # print(sqlite3.sqlite_version)
-framedata = 'framedata'
 
-con = sqlite3.connect("./framedata.db")
+con = sqlite3.connect("./db.db")
 con.row_factory = sqlite3.Row
 
 def db_table(query_str=''):
@@ -14,7 +13,7 @@ def db_table(query_str=''):
 				cur = con.cursor()
 				if bool(query_str):
 						query_str = ' ' + query_str
-				execute_str = 'SELECT * FROM framedata' + query_str
+				execute_str = 'select guard.ko as guard_ko, _framedata.* from (SELECT * FROM framedata ' + query_str + " ) _framedata left join guard on (_framedata.guard = guard.en)"
 				cur.execute(execute_str)
 				row = cur.fetchone()
 				if row:
