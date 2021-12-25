@@ -18,7 +18,7 @@ import kor_changer
 import nchanger
 import numpy as np
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.WARN)
 
 bot = discord.Client(intents=discord.Intents.all())
 slash = SlashCommand(bot, sync_commands=True)
@@ -215,49 +215,49 @@ async def _search(ctx, charname, string):
 				embed = discord.Embed(title="검색 [캐릭 이름] [커맨드/시술명]", description="해당하는 정보를 찾을 수 없습니다. 위와 같이 입력해주세요.", color=0xedf11e)
 				await ctx.send(embed=embed)
 		else:
-				col = 0
-				CHARNAME = col
-				col += 1
-				COMMAND = col
-				col += 1
-				SKNAME = col
-				col += 1
-				DAMAGE = col
-				col += 1
-				GUARD = col
-				col += 1
-				STARTUP = col
-				col += 1
-				ACTIVE = col
-				col += 1
-				RECOVERY = col
-				col += 1
-				ONBLOCK = col
-				col += 1
-				ONHIT = col
-				col += 1
-				ICON = col
-				col += 1
-				IMAGE = col
-				col += 1
-				ODR = col
-				col += 1
-				ATTACK_LEVEL = col
-				col += 1
-				CLASH_LEVEL = col
-				col += 1
+    # col = 0
+    # CHARNAME = col
+    # col += 1
+    # COMMAND = col
+    # col += 1
+    # SKNAME = col
+    # col += 1
+    # DAMAGE = col
+    # col += 1
+    # GUARD = col
+    # col += 1
+    # STARTUP = col
+    # col += 1
+    # ACTIVE = col
+    # col += 1
+    # RECOVERY = col
+    # col += 1
+    # ONBLOCK = col
+    # col += 1
+    # ONHIT = col
+    # col += 1
+    # ICON = col
+    # col += 1
+    # IMAGE = col
+    # col += 1
+    # ODR = col
+    # col += 1
+    # ATTACK_LEVEL = col
+    # col += 1
+    # CLASH_LEVEL = col
+    # col += 1
 				for row in rows:
-						info_dic = {'데미지': row[3],
-						'가드판정': row[4],
-						'시동 프레임': row[5],
-						'지속 프레임': row[6],
-						'회수 프레임': row[7],
-						'가드시 이득': row[8],
-						'히트시 이득': row[9],
-						'공격레벨': row[ATTACK_LEVEL],
-						'상쇄레벨': row[CLASH_LEVEL],
+					info_dic = {'데미지': row['damage'],
+						'가드판정': row['guard'],
+						'시동 프레임': row['startup'],
+						'지속 프레임': row['active'],
+						'회수 프레임': row['recovery'],
+						'가드시 이득': row['onblock'],
+						'히트시 이득': row['onhit'],
+						'공격레벨': row['attack_level'],
+						'상쇄레벨': row['clash_level'],
 						}
-						await blow.t_embed(ctx, ko_name + " - " + row[1], row[2], info_dic, row[10], row[11])
+					await blow.t_embed(ctx, ko_name + " - " + row['command'], row['skname'], info_dic, row['icon'], row['image'])
 
 
 @slash.slash(name='기술', description='해당 캐릭터의 기술 목록을 보여줍니다.', guild_ids=guild_ids)
@@ -279,8 +279,8 @@ async def _skill(ctx, character):
 		else:
 				info_ = {'커맨드': [], '기술명': []}
 				for row in rows:
-						info_['커맨드'].append(row[1])
-						info_['기술명'].append(row[2])
+						info_['커맨드'].append(row['command'])
+						info_['기술명'].append(row['skname'])
 				await blow.c_embed(ctx, ko_name, " 기술 목록 ", info_)
 
 
