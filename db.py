@@ -1,19 +1,23 @@
+import logging
 import sqlite3
 import warnings
 
 # print(sqlite3.version)
 # print(sqlite3.sqlite_version)
-
 framedata = 'framedata'
 
-db = sqlite3.connect("./framedata.db")
+con = sqlite3.connect("./framedata.db")
+con.row_factory = sqlite3.Row
 
 def db_table(query_str=''):
-		with db:
-				cur = db.cursor()
+		with con:
+				cur = con.cursor()
 				if bool(query_str):
 						query_str = ' ' + query_str
 				execute_str = 'SELECT * FROM framedata' + query_str
+				cur.execute(execute_str)
+				row = cur.fetchone()
+				logging.debug(row.keys())
 				cur.execute(execute_str)
 				rows = cur.fetchall()
 				return rows
@@ -32,11 +36,14 @@ def _db_table(db, query_str=''):
 
 # db>데이터베이스 연결 , query>캐릭명
 def db_sktable(query_=''):
-		with db:
-				cur = db.cursor()
+		with con:
+				cur = con.cursor()
 				if bool(query_):
 						query_ = ' ' + query_
 				execute_ = 'SELECT * FROM framedata' + query_
+				cur.execute(execute_)
+				row = cur.fetchone()
+				logging.debug(row.keys())
 				cur.execute(execute_)
 				rows = cur.fetchall()
 				return rows
