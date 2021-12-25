@@ -33,9 +33,10 @@ guild_ids = bot.guilds
 dab = None
 dbb = sqlite3.connect("sklist.db")
 
+
 def getDB():
 		warnings.warn("deprecated")
-		return sqlite3.connect("./framedata.db")
+		return None
 
 
 @bot.event
@@ -250,7 +251,7 @@ async def _search(ctx, charname, string):
 		# col += 1
 				for row in rows:
 					info_dic = {'데미지': row['damage'],
-						'가드판정': row['guard'],
+						'가드판정': row['guard_ko'] or row['guard'],
 						'시동 프레임': row['startup'],
 						'지속 프레임': row['active'],
 						'회수 프레임': row['recovery'],
