@@ -1,12 +1,14 @@
-import discord
-from discord import embeds
-import numpy as np
 import asyncio
 import logging
 import re
 
-#logging.basicConfig(level=logging.DEBUG)
+from discord import embeds
+import discord
 
+import numpy as np
+
+
+#logging.basicConfig(level=logging.DEBUG)
 async def t_embed(channel, title, description, data, icon, image):
   embed = discord.Embed(title=title, description=description, color=0xfd4949)
   if icon and icon.lower().find("http") > -1:
@@ -69,10 +71,8 @@ async def c_embed(channel, title, description, data):
         embed = discord.Embed(color=0xf3fd68)
     #subEmbed = discord.Embed(color=0xf3fd68)
     embed.add_field(name=command, value=skname, inline=False)
-    #embed.add_field(name="-", value=command + "\t\t" + skname, inline=True)
     #message = await channel.send(embed=subEmbed)
     #messages.append(message)
-    #lst +=(command + "\t\t" + skname + "\n")
   #messages = []
   #embed.add_field(name="-", value=lst, inline=True)
   message = await channel.send(embed=embed)
