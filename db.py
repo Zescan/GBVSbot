@@ -17,7 +17,8 @@ def db_table(query_str=''):
 				execute_str = 'SELECT * FROM framedata' + query_str
 				cur.execute(execute_str)
 				row = cur.fetchone()
-				logging.debug(row.keys())
+				if row:
+					logging.debug(row.keys())
 				cur.execute(execute_str)
 				rows = cur.fetchall()
 				return rows
@@ -43,7 +44,8 @@ def db_sktable(query_=''):
 				execute_ = 'SELECT * FROM framedata' + query_
 				cur.execute(execute_)
 				row = cur.fetchone()
-				logging.debug(row.keys())
+				if row:
+					logging.debug(row.keys())
 				cur.execute(execute_)
 				rows = cur.fetchall()
 				return rows
@@ -60,3 +62,12 @@ def _db_sktable(db, query_=''):
 			cur.execute(execute_)
 			rows = cur.fetchall()
 			return rows
+
+
+def char():
+	with con:
+		cur = con.cursor()
+		query = 'select distinct name_ko, charname from framedata order by name_ko, charname'
+		cur.execute(query)
+		rows = cur.fetchall()
+		return rows
