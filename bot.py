@@ -4,6 +4,7 @@ import os
 import random
 import re
 import sqlite3
+import warnings
 
 import discord
 from discord.ext import commands
@@ -29,11 +30,11 @@ charlist = o.read().split()
 # 서버아이디
 guild_ids = bot.guilds
 #database
-#dab = sqlite3.connect("./framedata.db")
 dab = None
 dbb = sqlite3.connect("sklist.db")
 
 def getDB():
+		warnings.warn("deprecated")
 		return sqlite3.connect("./framedata.db")
 
 
@@ -80,7 +81,7 @@ async def on_message(message):
 		elif first == "깃허브":
 				await _github(ctx)
 		else:
-				raise
+			logging.info("no mapping");
 
 
 # TODO 이게 뭘 하는 건지 파악해야 함.
@@ -171,7 +172,7 @@ async def _char(ctx):
 
 
 @slash.slash(name="검색", description='해당 캐릭터의 기술의 프레임데이터를 보여줍니다.', guild_ids=guild_ids)
-async def i(ctx, charname, command):
+async def search(ctx, charname, command):
 		await _search(ctx, charname, command)
 
 
@@ -207,9 +208,8 @@ async def _search(ctx, charname, string):
 		query_str += "WHERE trim(charname) = '" + charname + "' "
 		query_str += "AND case when trim(command) = '" + command + "' or trim(skname) like '" + skname + "' then 1 end is not null "
 		print(query_str)
-		# dab = sqlite3.connect("./framedata.db")
-		dab = getDB()
-		rows = db.db_table(dab, query_str)
+  # dab = getDB()
+		rows = db.db_table(query_str)
 		if not rows:
 				await _skill(ctx, charname)
 				embed = discord.Embed(title="검색 [캐릭 이름] [커맨드/시술명]", description="해당하는 정보를 찾을 수 없습니다. 위와 같이 입력해주세요.", color=0xedf11e)
@@ -261,7 +261,7 @@ async def _search(ctx, charname, string):
 
 
 @slash.slash(name='기술', description='해당 캐릭터의 기술 목록을 보여줍니다.', guild_ids=guild_ids)
-async def m(ctx, character):
+async def skill(ctx, character):
 		await _skill(ctx, character)
 
 
@@ -271,8 +271,8 @@ async def _skill(ctx, character):
 		charname = character.capitalize()
 		print(charname)
 		query_ = "WHERE charname = '" + charname + "' order by odr"
-		dab = getDB()
-		rows = db.db_sktable(dab, query_)
+  # dab = getDB()
+		rows = db.db_sktable(query_)
 		if not rows:
 				embed = discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
 				await ctx.send(embed=embed)
@@ -285,7 +285,7 @@ async def _skill(ctx, character):
 
 
 @slash.slash(name="공략", description='해당 캐릭터의 공략글을 보여줍니다.', guild_ids=guild_ids)
-async def g(ctx, charname):
+async def walkthrough(ctx, charname):
 		await _walkthrough(ctx, charname)
 
 
@@ -300,7 +300,7 @@ async def _walkthrough(ctx, charname):
 
 
 @slash.slash(name="랜덤", description='랜덤으로 아무 캐릭터나 뽑아줍니다.', guild_ids=guild_ids)
-async def r(ctx):
+async def random(ctx):
 		await _random(ctx)
 
 
