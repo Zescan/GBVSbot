@@ -8,7 +8,6 @@ import warnings
 con = sqlite3.connect("./db.db")
 con.row_factory = sqlite3.Row
 
-
 def framedata(query_str=''):
 		with con:
 				cur = con.cursor()
@@ -96,10 +95,20 @@ def ko(en):
 def ko_name(nickname):
 	with con:
 		cur = con.cursor()
-	# cur.execute("select ko from nickname order by priority", {"nickname": nickname})
 		cur.execute("select * from nickname order by priority")
+	# cur.execute("select * from nickname where :nickname REGEXP regex  order by priority", {"nickname": nickname})
 	# row = cur.fetchone()
 		for row in cur.fetchall():
 			if re.search(row['regex'], nickname):
 				return row['ko']
 		return None
+
+
+def command(ko):
+	with con:
+		en = ko
+		cur = con.cursor()
+		cur.execute("select * from command order by length(en) desc, length(ko) desc")
+		for row in cur.fetchall():
+			en = en.replace(row['ko'], row['en'])
+		return en
