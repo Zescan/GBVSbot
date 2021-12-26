@@ -112,3 +112,10 @@ def command(ko):
 		for row in cur.fetchall():
 			en = en.replace(row['ko'], row['en'])
 		return en
+
+
+def walkthrough(ko):
+	with con:
+		cur = con.cursor()
+		cur.execute("select * from name where trim(ko) = :ko", {"ko": ko})
+		return cur.fetchone()
