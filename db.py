@@ -130,3 +130,11 @@ def images(name, command):
 		cur = con.cursor()
 		cur.execute("select * from move_image where name = :name and command = :command order by odr ", {"name": name, "command": command})
 		return cur.fetchall()
+
+
+def icon(name):
+	with con:
+		cur = con.cursor()
+		cur.execute("select * from name where en = :en", {"en": name})
+		row = cur.fetchone()
+		return row['icon']
