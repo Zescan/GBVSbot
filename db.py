@@ -80,7 +80,9 @@ def en(ko):
 		query = "select en from name where ko = '{ko}'".format(ko=ko)
 		cur.execute(query)
 		row = cur.fetchone()
-		return row['en'] or None
+		if not row:
+			return ko
+		return row['en']
 
 
 def ko(en):
@@ -89,7 +91,9 @@ def ko(en):
 		query = "select ko from name where en = '{en}'".format(en=en)
 		cur.execute(query)
 		row = cur.fetchone()
-		return row['ko'] or None
+		if not row:
+			return en
+		return row['ko']
 
 
 def ko_name(nickname):
@@ -101,7 +105,7 @@ def ko_name(nickname):
 		for row in cur.fetchall():
 			if re.search(row['regex'], nickname):
 				return row['ko']
-		return None
+		return nickname
 
 
 def command(ko):
