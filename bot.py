@@ -188,7 +188,7 @@ async def search(ctx, charname, command):
 
 async def _search(ctx, charname, string):
 	# charname = nchanger.ncgr(charname)
-	# ko_name = nchanger.rncgr(charname)
+		charname = db.ko_name(charname)
 	# charname = charname.capitalize()
 		charname = db.en(charname)
 		logging.debug(charname)
@@ -277,6 +277,7 @@ async def skill(ctx, character):
 
 async def _skill(ctx, charname):
 	# character = nchanger.ncgr(character)
+		charname = db.ko_name(charname)
   # ko_name = nchanger.rncgr(charname)
 	# charname = character.capitalize()
 		charname = db.en(charname)
