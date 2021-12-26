@@ -150,7 +150,7 @@ async def _char(ctx):
 		embed = discord.Embed(title="캐릭터 리스트", description="현재 검색 가능한 캐릭터(한글 가나다순) 목록입니다.", color=0x6b9fff)
 		for row in db.char():
 			embed.add_field(name=row['name_ko'], value=row['charname'], inline=False)
-	 # embed.add_field(name=row['name_ko'], value=row['charname'], inline=False)
+	# embed.add_field(name=row['name_ko'], value=row['charname'], inline=False)
 	# embed.add_field(name="그랑", value="Gran", inline=True)
 	# embed.add_field(name="나루메아", value="Narmaya", inline=True)
 	# embed.add_field(name="랜슬롯", value="Lancelot", inline=True)
@@ -181,9 +181,10 @@ async def search(ctx, charname, command):
 
 
 async def _search(ctx, charname, string):
-		charname = nchanger.ncgr(charname)
-		ko_name = nchanger.rncgr(charname)
-		charname = charname.capitalize()
+	# charname = nchanger.ncgr(charname)
+	# ko_name = nchanger.rncgr(charname)
+	# charname = charname.capitalize()
+		charname = db.en(charname)
 		logging.debug(charname)
 		logging.debug(string)
 		skname = string.strip()
@@ -209,11 +210,11 @@ async def _search(ctx, charname, string):
 						command = command.replace(dot, dot.lower(), 1)
 						logging.debug(command)
 		query_str = ""
-		query_str += "WHERE case when '{charname}' in (trim(charname), trim(name_ko)) then 1 end is not null ".format(charname=charname)
+		query_str += "WHERE case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
 		query_str += "AND case when trim(command) = '" + command + "' or trim(skname) like '" + skname + "' then 1 end is not null "
 		print(query_str)
 	# dab = getDB()
-		rows = db.db_table(query_str)
+		rows = db.framedata(query_str)
 		if not rows:
 				await _skill(ctx, charname)
 				embed = discord.Embed(title="검색 [캐릭 이름] [커맨드/시술명]", description="해당하는 정보를 찾을 수 없습니다. 위와 같이 입력해주세요.", color=0xedf11e)
@@ -260,7 +261,7 @@ async def _search(ctx, charname, string):
 						'공격레벨': row['attack_level'],
 						'상쇄레벨': row['clash_level'],
 						}
-					await blow.t_embed(ctx, ko_name + " - " + row['command'], row['move_name_ko'] or row['skname'] or row['command'], info_dic, row['icon'], row['image'])
+					await blow.t_embed(ctx, row['name_ko'] + " - " + row['command'], row['move_name_ko'] or row['skname'] or row['command'], info_dic, row['icon'], row['image'])
 
 
 @slash.slash(name='기술', description='해당 캐릭터의 기술 목록을 보여줍니다.', guild_ids=guild_ids)
@@ -268,15 +269,17 @@ async def skill(ctx, character):
 		await _skill(ctx, character)
 
 
-async def _skill(ctx, character):
-		character = nchanger.ncgr(character)
-		ko_name = nchanger.rncgr(character)
-		charname = character.capitalize()
-		print(charname)
-  # query_ = "WHERE charname = '" + charname + "' order by odr"
-		query_ = "WHERE case when '{charname}' in (trim(charname), trim(name_ko)) then 1 end is not null order by odr".format(charname=charname)
+async def _skill(ctx, charname):
+	# character = nchanger.ncgr(character)
+  # ko_name = nchanger.rncgr(charname)
+	# charname = character.capitalize()
+		charname = db.en(charname)
+  # ko_name = db.ko(charname)
+		logging.debug(charname)
+	# query_ = "WHERE charname = '" + charname + "' order by odr"
+		query_ = "WHERE case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
 	# dab = getDB()
-		rows = db.db_sktable(query_)
+		rows = db.framedata(query_)
 		if not rows:
 				embed = discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
 				await ctx.send(embed=embed)
@@ -285,7 +288,7 @@ async def _skill(ctx, character):
 				for row in rows:
 						info_['커맨드'].append(row['command'])
 						info_['기술명'].append(row['move_name_ko'] or row['skname'] or row['command'])
-				await blow.c_embed(ctx, ko_name, " 기술 목록 ", info_)
+				await blow.c_embed(ctx, row['name_ko'], " 기술 목록 ", info_)
 
 
 @slash.slash(name="공략", description='해당 캐릭터의 공략글을 보여줍니다.', guild_ids=guild_ids)
