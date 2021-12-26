@@ -119,3 +119,10 @@ def walkthrough(ko):
 		cur = con.cursor()
 		cur.execute("select * from name where trim(ko) = :ko", {"ko": ko})
 		return cur.fetchone()
+
+
+def images(name, command):
+	with con:
+		cur = con.cursor()
+		cur.execute("select * from move_image where name = :name and command = :command order by odr ", {"name": name, "command": command})
+		return cur.fetchall()
