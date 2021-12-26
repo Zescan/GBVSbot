@@ -18,7 +18,7 @@ import kor_changer
 import nchanger
 import numpy as np
 
-logging.basicConfig(level=logging.WARN)
+logging.basicConfig(level=logging.DEBUG)
 
 bot = discord.Client(intents=discord.Intents.all())
 slash = SlashCommand(bot, sync_commands=True)
@@ -78,7 +78,7 @@ async def on_message(message):
 		elif first == "캐릭터":
 				await _char(ctx)
 		elif first == "기술":
-				await _skill(ctx, charname)
+				await _search(ctx, charname, command)
 		elif first == "공략":
 				await _walkthrough(ctx, charname)
 		elif first == "검색":
@@ -110,9 +110,9 @@ async def _list(ctx):
 		embed.add_field(name='/루나루', value='랜덤으로 아무 캐릭터나 뽑아줍니다.', inline=False)
 		embed.add_field(name='/Lunalu', value='랜덤으로 아무 캐릭터나 뽑아줍니다.', inline=False)
 		embed.add_field(name='/캐릭터', value='캐릭터들 목록과 영문 이름을 보여줍니다.', inline=False)
-		embed.add_field(name='/기술 (캐릭명)', value='해당 캐릭터의 기술 목록을 보여줍니다.', inline=False)
 		embed.add_field(name='/공략 (캐릭명)', value='해당 캐릭터의 공략글을 보여줍니다.', inline=False)
 		embed.add_field(name='/검색 (캐릭명) (기술 커맨드)', value='해당 캐릭터의 기술의 프레임데이터를 보여줍니다.', inline=False)
+		embed.add_field(name='/기술 (캐릭명) (기술 커맨드)', value='해당 캐릭터의 기술의 프레임데이터를 보여줍니다.', inline=False)
 		embed.add_field(name='/깃허브', value='파스티바_봇의 깃허브 링크를 보여줍니다.', inline=False)
 		await ctx.send(embed=embed)
 
@@ -220,7 +220,7 @@ async def _search(ctx, charname, string):
 		rows = db.framedata(query_str)
 		if not rows:
 				await _skill(ctx, charname)
-				embed = discord.Embed(title="검색 [캐릭 이름] [커맨드/시술명]", description="해당하는 정보를 찾을 수 없습니다. 위와 같이 입력해주세요.", color=0xedf11e)
+				embed = discord.Embed(title="검색/기술 [캐릭 이름] [커맨드/기술명]", description="특정 기술에 대해서는 위와 같이 입력해주세요.", color=0xedf11e)
 				await ctx.send(embed=embed)
 		else:
 		# col = 0
@@ -267,9 +267,9 @@ async def _search(ctx, charname, string):
 					await blow.t_embed(ctx, row['name_ko'] + " - " + row['command'], row['move_name_ko'] or row['skname'] or row['command'], info_dic, row['icon'], db.images(row['charname'], row['command']))
 
 
-@slash.slash(name='기술', description='해당 캐릭터의 기술 목록을 보여줍니다.', guild_ids=guild_ids)
-async def skill(ctx, character):
-		await _skill(ctx, character)
+@slash.slash(name='기술', description='해당 캐릭터의 기술의 프레임데이터를 보여줍니다.', guild_ids=guild_ids)
+async def skill(ctx, character, command):
+		await _search(ctx, character, command)
 
 
 async def _skill(ctx, charname):
@@ -280,6 +280,7 @@ async def _skill(ctx, charname):
 		logging.debug(charname)
 	# query_ = "WHERE charname = '" + charname + "' order by odr"
 		query_ = "WHERE case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
+		logging.debug(query_)
 	# dab = getDB()
 		rows = db.framedata(query_)
 		if not rows:
