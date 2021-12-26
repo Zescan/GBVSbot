@@ -302,11 +302,13 @@ async def _walkthrough(ctx, charname):
 	# charname = nchanger.ncgr(charname)
 	# charname = nchanger.rncgr(charname)
 		charname = db.ko_name(charname)
-		if charname in charlist:
-				await blow.g_embed(ctx, charname)
-		else:
-				embed = discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
-				await ctx.send(embed=embed)
+		logging.debug(charname)
+		await blow.g_embed(ctx, charname)
+  # if charname in charlist:
+  # 		await blow.g_embed(ctx, charname)
+  # else:
+  # 		embed = discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
+  # 		await ctx.send(embed=embed)
 
 
 @slash.slash(name="랜덤", description='랜덤으로 아무 캐릭터나 뽑아줍니다.', guild_ids=guild_ids)
