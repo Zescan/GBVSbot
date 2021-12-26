@@ -1,10 +1,10 @@
 import logging
+import re
 import sqlite3
 import warnings
 
 # print(sqlite3.version)
 # print(sqlite3.sqlite_version)
-
 con = sqlite3.connect("./db.db")
 con.row_factory = sqlite3.Row
 
@@ -91,3 +91,15 @@ def ko(en):
 		cur.execute(query)
 		row = cur.fetchone()
 		return row['ko'] or None
+
+
+def ko_name(nickname):
+	with con:
+		cur = con.cursor()
+	# cur.execute("select ko from nickname order by priority", {"nickname": nickname})
+		cur.execute("select * from nickname order by priority")
+	# row = cur.fetchone()
+		for row in cur.fetchall():
+			if re.search(row['regex'], nickname):
+				return row['ko']
+		return None
