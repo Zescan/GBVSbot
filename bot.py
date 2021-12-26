@@ -187,7 +187,6 @@ async def search(ctx, charname, command):
 
 
 async def _search(ctx, charname, string):
-	# charname = nchanger.ncgr(charname)
 		charname = db.ko_name(charname)
 	# charname = charname.capitalize()
 		charname = db.en(charname)
@@ -197,24 +196,22 @@ async def _search(ctx, charname, string):
 		logging.info("커맨드 확인")
 		command = string.strip()
 		logging.debug(command)
-		command = changer.cgr(command)
+	# command = changer.cgr(command)
+	# logging.debug(command)
+	# logging.debug(command)
+	# k = '12'
+	# for j in k:
+	# 		logging.debug(j)
+	# 		logging.debug(command)
+	# command = command.upper()
+	# match = re.search(r"(.\.)", command)
+	# if match:
+	# 		# print(match.groups())
+	# 		for dot in match.groups():
+	# 				command = command.replace(dot, dot.lower(), 1)
+	# 				logging.debug(command)
+		command = db.command(command)
 		logging.debug(command)
-		command = kor_changer.nor_cgr(command)
-		logging.debug(command)
-		k = '12'
-		for j in k:
-				logging.debug(j)
-				command = kor_changer.com_cgr(command)
-				logging.debug(command)
-		# print(charname)
-		command = command.upper()
-		logging.debug(command)
-		match = re.search(r"(.\.)", command)
-		if match:
-				# print(match.groups())
-				for dot in match.groups():
-						command = command.replace(dot, dot.lower(), 1)
-						logging.debug(command)
 		query_str = ""
 		query_str += "WHERE case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
 		query_str += "AND case when trim(command) = '" + command + "' or trim(skname) like '" + skname + "' then 1 end is not null "
@@ -276,12 +273,10 @@ async def skill(ctx, character):
 
 
 async def _skill(ctx, charname):
-	# character = nchanger.ncgr(character)
 		charname = db.ko_name(charname)
-  # ko_name = nchanger.rncgr(charname)
 	# charname = character.capitalize()
 		charname = db.en(charname)
-  # ko_name = db.ko(charname)
+	# ko_name = db.ko(charname)
 		logging.debug(charname)
 	# query_ = "WHERE charname = '" + charname + "' order by odr"
 		query_ = "WHERE case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
@@ -304,8 +299,9 @@ async def walkthrough(ctx, charname):
 
 
 async def _walkthrough(ctx, charname):
-		charname = nchanger.ncgr(charname)
-		charname = nchanger.rncgr(charname)
+	# charname = nchanger.ncgr(charname)
+	# charname = nchanger.rncgr(charname)
+		charname = db.ko_name(charname)
 		if charname in charlist:
 				await blow.g_embed(ctx, charname)
 		else:
