@@ -71,6 +71,10 @@ async def on_message(message):
 				await _ping(ctx)
 		elif first == "랜덤":
 				await _random(ctx)
+		elif first == "루나루":
+				await _random(ctx)
+		elif first == "Lunalu":
+				await _random(ctx)
 		elif first == "캐릭터":
 				await _char(ctx)
 		elif first == "기술":
@@ -103,6 +107,8 @@ async def _list(ctx):
 		embed.add_field(name='/설명서', value='파스티바_봇 사용설명서를 보여줍니다.', inline=False)
 		embed.add_field(name='/핑', value='현재 핑 상태를 측정합니다.', inline=False)
 		embed.add_field(name='/랜덤', value='랜덤으로 아무 캐릭터나 뽑아줍니다.', inline=False)
+		embed.add_field(name='/루나루', value='랜덤으로 아무 캐릭터나 뽑아줍니다.', inline=False)
+		embed.add_field(name='/Lunalu', value='랜덤으로 아무 캐릭터나 뽑아줍니다.', inline=False)
 		embed.add_field(name='/캐릭터', value='캐릭터들 목록과 영문 이름을 보여줍니다.', inline=False)
 		embed.add_field(name='/기술 (캐릭명)', value='해당 캐릭터의 기술 목록을 보여줍니다.', inline=False)
 		embed.add_field(name='/공략 (캐릭명)', value='해당 캐릭터의 공략글을 보여줍니다.', inline=False)
@@ -307,12 +313,24 @@ async def _walkthrough(ctx, charname):
 
 
 @slash.slash(name="랜덤", description='랜덤으로 아무 캐릭터나 뽑아줍니다.', guild_ids=guild_ids)
-async def random(ctx):
+async def rand(ctx):
+		await _random(ctx)
+
+
+@slash.slash(name="루나루", description='랜덤으로 아무 캐릭터나 뽑아줍니다.', guild_ids=guild_ids)
+async def lunalu(ctx):
+		await _random(ctx)
+
+
+@slash.slash(name="Lunalu", description='Get randomized name.', guild_ids=guild_ids)
+async def lunalu(ctx):
 		await _random(ctx)
 
 
 async def _random(ctx):
+		charlist = db.char()
 		choicechar = random.choice(charlist)
+		choicechar = choicechar['name_ko'] or choicechar['charname']
 		embed = discord.Embed(title="캐릭터 랜덤 선택 결과...", description=f'[{choicechar}] (이)가 나왔습니다.', color=0xb377ee)
 		await ctx.send(embed=embed)
 
