@@ -96,7 +96,7 @@ def ko(en):
 		return row['ko']
 
 
-def ko_name(nickname):
+def name_ko(nickname):
 	with con:
 		cur = con.cursor()
 		cur.execute("select * from nickname order by priority")
@@ -106,6 +106,10 @@ def ko_name(nickname):
 			if re.search(row['regex'], nickname):
 				return row['ko']
 		return nickname
+
+
+def ko_name(nickname):
+	return name_ko(nickname)
 
 
 def command(pattern):
@@ -138,3 +142,20 @@ def icon(name):
 		cur.execute("select * from name where en = :en", {"en": name})
 		row = cur.fetchone()
 		return row['icon']
+
+
+def move(name, move_nick):
+	logging.info("기술 별명에서 기술을 검색합니다.")
+	logging.debug(name)
+	logging.debug(move_nick)
+	with con:
+		cur = con.cursor()
+		cur.execute("select * from move_nick where name = :name order by length(move) desc, length(move_nick) desc, move desc, move_nick desc", {"name": name})
+		move = move_nick
+		for row in cur.fetchall():
+			move = move.replace(row['move_nick'], row['move'])
+			cur.execute("select * from framedata where skname = :skname", {"skname": move})
+			rows = cur.fetchall()
+			if rows:
+				return move
+		return move
