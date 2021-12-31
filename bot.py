@@ -187,12 +187,15 @@ async def search(ctx, charname, command):
 
 
 async def _search(ctx, charname, string):
-		charname = db.ko_name(charname)
-	# charname = charname.capitalize()
+		charname = db.name_ko(charname)
+		name_ko = charname
 		charname = db.en(charname)
 		logging.debug(charname)
 		logging.debug(string)
 		skname = string.strip()
+		logging.debug(skname)
+		skname = db.move(name_ko, skname)
+		logging.debug(skname)
 		logging.info("커맨드 확인")
 		command = string.strip()
 		logging.debug(command)
@@ -273,10 +276,9 @@ async def skill(ctx, character, command):
 
 
 async def _skill(ctx, charname):
-		charname = db.ko_name(charname)
+		charname = db.name_ko(charname)
 	# charname = character.capitalize()
 		charname = db.en(charname)
-	# ko_name = db.ko(charname)
 		logging.debug(charname)
 	# query_ = "WHERE charname = '" + charname + "' order by odr"
 		query_ = "WHERE case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
@@ -300,9 +302,7 @@ async def walkthrough(ctx, charname):
 
 
 async def _walkthrough(ctx, charname):
-	# charname = nchanger.ncgr(charname)
-	# charname = nchanger.rncgr(charname)
-		charname = db.ko_name(charname)
+		charname = db.name_ko(charname)
 		logging.debug(charname)
 		await blow.g_embed(ctx, charname)
   # if charname in charlist:
