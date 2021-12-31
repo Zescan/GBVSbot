@@ -108,14 +108,14 @@ def ko_name(nickname):
 		return nickname
 
 
-def command(ko):
+def command(pattern):
 	with con:
-		en = ko
+		replace = pattern
 		cur = con.cursor()
-		cur.execute("select * from command order by length(en) desc, length(ko) desc")
+		cur.execute("select * from command order by length(pattern) desc, length(replace) DESC, pattern desc, replace desc")
 		for row in cur.fetchall():
-			en = en.replace(row['ko'], row['en'])
-		return en
+			replace = replace.replace(row['pattern'], row['replace'])
+		return replace
 
 
 def walkthrough(ko):
