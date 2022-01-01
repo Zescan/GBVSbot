@@ -159,3 +159,10 @@ def move(name, move_nick):
 			if rows:
 				return move
 		return move
+
+
+def list():
+	with con:
+		cur = con.cursor()
+		cur.execute("select * from list order by odr, name desc")
+		return cur.fetchall()
