@@ -375,5 +375,30 @@ async def _pattern(ctx):
 	return messages
 
 
+@slash.slash(name="별명", description="해당 캐릭터의 기술에 대한 별명을 보여줍니다. ", guild_ids=guild_ids)
+async def move_nick(ctx, name):
+	await _move_nick(ctx, name)
+
+
+async def _move_nick(ctx, name):
+	embed = discord.Embed(title="별명목록", description='긴 패턴부터 우선 변환적용됩니다.', color=0xb377ee)
+	messages = []
+	message = await ctx.send(embed=embed)
+	messages.append(message)
+	embed = discord.Embed(color=0xf3fd68)
+	ko = db.name_ko(name)
+	i = 0
+	for row in db.move_nick(ko):
+		if i % 20 == 19:
+			message = await ctx.send(embed=embed)
+			messages.append(message)
+			embed = discord.Embed(color=0xf3fd68)
+		embed.add_field(name=row['move_nick'], value=row['move'], inline=False)
+		i = i + 1
+	message = await ctx.send(embed=embed)
+	messages.append(message)
+	return messages
+
+
 load_dotenv()
 bot.run(os.environ['token'])
