@@ -268,8 +268,8 @@ async def _search(ctx, charname, string):
 						'시동 프레임': row['startup'],
 						'지속 프레임': row['active'],
 						'회수 프레임': row['recovery'],
-						'가드시 이득': row['onblock'],
-						'히트시 이득': (row['onhit'] or "-").replace("HKD", "강제다운").replace("KD", "다운"),
+						'가드시 이득': db.on(row['onblock']),
+						'히트시 이득': db.on(row['onhit']),
 						'공격레벨': row['attack_level'],
 						'상쇄레벨': row['clash_level'],
 						}
