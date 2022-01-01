@@ -166,3 +166,11 @@ def list():
 		cur = con.cursor()
 		cur.execute("select * from list order by odr, name desc")
 		return cur.fetchall()
+
+
+def pattern():
+	with con:
+		replace = pattern
+		cur = con.cursor()
+		cur.execute("select * from command order by length(pattern) desc, length(replace) DESC, pattern desc, replace desc")
+		return cur.fetchall()
