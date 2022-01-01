@@ -174,3 +174,11 @@ def pattern():
 		cur = con.cursor()
 		cur.execute("select * from command order by length(pattern) desc, length(replace) DESC, pattern desc, replace desc")
 		return cur.fetchall()
+
+
+def move_nick(name):
+	with con:
+		cur = con.cursor()
+		cur.execute("select * from move_nick where name = :name order by length(move) desc, length(move_nick) desc, move desc, move_nick desc", {"name": name})
+		return cur.fetchall()
+
