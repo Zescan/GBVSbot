@@ -85,9 +85,9 @@ async def on_message(message):
 				await _search(ctx, charname, command)
 		elif first == "깃허브":
 				await _github(ctx)
-		elif first == "공통커맨드":
-				await _command(ctx)
-		elif first == "기술별명":
+		elif first == "패턴":
+				await _pattern(ctx)
+		elif first == "별명":
 			await _move_nick(ctx, charname)
 		else:
 			logging.info("no mapping");
@@ -349,6 +349,30 @@ async def github(ctx):
 async def _github(ctx):
 		embed = discord.Embed(title="파스티바_봇 깃허브 링크", description="https://github.com/crew852/GBVSbot", color=0xb377ee)
 		await ctx.send(embed=embed)
+
+
+@slash.slash(name="패턴", description="검색 가능한 커맨드 패턴을 보여줍니다.", guild_ids=guild_ids)
+async def pattern(ctx):
+	await _pattern(ctx)
+
+	
+async def _pattern(ctx):
+	embed = discord.Embed(title="패턴목록", description='긴 패턴부터 우선 변환적용됩니다.', color=0xb377ee)
+	messages = []
+	message = await ctx.send(embed=embed)
+	messages.append(message)
+	embed = discord.Embed(color=0xf3fd68)
+	i = 0
+	for row in db.pattern():
+		if i%20 == 19:
+			message = await ctx.send(embed=embed)
+			messages.append(message)
+			embed = discord.Embed(color=0xf3fd68)
+		embed.add_field(name=row['pattern'], value=row['replace'], inline=False)
+		i = i + 1
+	message = await ctx.send(embed=embed)
+	messages.append(message)
+	return messages
 
 
 load_dotenv()
