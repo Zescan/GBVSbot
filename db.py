@@ -182,3 +182,12 @@ def move_nick(name):
 		cur.execute("select * from move_nick where name = :name order by length(move) desc, length(move_nick) desc, move desc, move_nick desc", {"name": name})
 		return cur.fetchall()
 
+
+def on(pattern):
+	with con:
+		replace = pattern
+		cur = con.cursor()
+		cur.execute("select * from on_ order by length(pattern) desc, length(replace) DESC, pattern desc, replace desc")
+		for row in cur.fetchall():
+			replace = replace.replace(row['pattern'], row['replace'])
+		return replace
