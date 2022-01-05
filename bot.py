@@ -4,6 +4,7 @@ import os
 import random
 import re
 import sqlite3
+import sys
 import warnings
 
 import discord
@@ -63,34 +64,37 @@ async def on_message(message):
 		if len(arr) > 2:
 				command = message.content.replace(first, "", 1).replace(charname, "", 1).strip()
 		ctx = message.channel
-		if first == "명령어":
+		if not first:
+			logging.info("종료")
+		elif first == "명령어":
 				await _list(ctx)
 		elif first == "설명서":
 				await _tip(ctx)
 		elif first == "핑":
 				await _ping(ctx)
-		elif first == "랜덤":
+		elif first in ["랜덤", "루나루", "Lunalu", "lunalu"]:
 				await _random(ctx)
-		elif first == "루나루":
-				await _random(ctx)
-		elif first == "Lunalu":
-				await _random(ctx)
+		# elif first == "루나루":
+		# 		await _random(ctx)
+		# elif first == "Lunalu":
+		# 		await _random(ctx)
 		elif first == "캐릭터":
 				await _char(ctx)
-		elif first == "기술":
-				await _search(ctx, charname, command)
 		elif first == "공략":
 				await _walkthrough(ctx, charname)
-		elif first == "검색":
-				await _search(ctx, charname, command)
 		elif first == "깃허브":
 				await _github(ctx)
 		elif first == "패턴":
 				await _pattern(ctx)
 		elif first == "별명":
 			await _move_nick(ctx, charname)
+		elif first in ["기술", "검색"]:
+				await _search(ctx, charname, command)
 		else:
-			logging.info("no mapping");
+			logging.info("명령어 위치를 옮깁니다.")
+			command = "{arg1} {arg2}".format(arg1=charname, arg2=command)
+			charname = first
+			await _search(ctx, charname, command)
 
 
 # TODO 이게 뭘 하는 건지 파악해야 함.
