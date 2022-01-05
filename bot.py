@@ -232,8 +232,8 @@ async def _search(ctx, charname, string):
 	# dab = getDB()
 		rows = db.framedata(query_str)
 		if not rows:
-				await _skill(ctx, charname)
-				embed = discord.Embed(title="검색/기술 [캐릭 이름] [커맨드/기술명]", description="특정 기술에 대해서는 위와 같이 입력해주세요.", color=0xedf11e)
+				await _skill(ctx, charname, command, skname)
+				embed = discord.Embed(title="[캐릭 이름] [커맨드/기술명]", description="특정 기술에 대해서는 위와 같이 입력해주세요.", color=0xedf11e)
 				await ctx.send(embed=embed)
 		else:
 		# col = 0
@@ -285,15 +285,25 @@ async def skill(ctx, character, command):
 		await _search(ctx, character, command)
 
 
-async def _skill(ctx, charname):
+async def _skill(ctx, charname, command, skname):
 		charname = db.name_ko(charname)
 	# charname = character.capitalize()
 		charname = db.en(charname)
 		logging.debug(charname)
-	# query_ = "WHERE charname = '" + charname + "' order by odr"
-		query_ = "WHERE case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
+		query_ = " where 1=1 "
+		query_ += " and case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
+		if command or skname:
+			query_ += " and case when 0=1 "
+			for part in re.findall(re.compile("[^0-9]"), command):
+				query_ += " or instr(trim(command), '{part}') > 0 ".format(part=part)
+			for part in re.findall(re.compile("[0-9]+"), command):
+				query_ += " or instr(trim(command), '{part}') > 0 ".format(part=part)
+			for part in re.findall(re.compile("[약중강특]"), skname):
+				query_ += " or instr(trim(move_name_ko), '{part}') > 0 ".format(part=part)
+			for part in re.findall(re.compile("[^약중강특]+"), skname):
+				query_ += " or instr(trim(move_name_ko), '{part}') > 0 ".format(part=part)
+			query_ += " then 1 end is not null "
 		logging.debug(query_)
-	# dab = getDB()
 		rows = db.framedata(query_)
 		if not rows:
 				embed = discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
