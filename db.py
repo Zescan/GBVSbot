@@ -100,8 +100,6 @@ def name_ko(nickname):
 	with con:
 		cur = con.cursor()
 		cur.execute("select * from nickname order by priority")
-	# cur.execute("select * from nickname where :nickname REGEXP regex  order by priority", {"nickname": nickname})
-	# row = cur.fetchone()
 		for row in cur.fetchall():
 			if re.search(row['regex'], nickname):
 				return row['ko']
