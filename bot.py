@@ -91,10 +91,11 @@ async def on_message(message):
 		elif first in ["기술", "검색"]:
 				await _search(ctx, charname, command)
 		else:
-			logging.info("명령어 위치를 옮깁니다.")
-			command = "{arg1} {arg2}".format(arg1=charname, arg2=command)
-			charname = first
-			await _search(ctx, charname, command)
+			if None:
+				logging.info("명령어 위치를 옮깁니다.")
+				command = "{arg1} {arg2}".format(arg1=charname, arg2=command)
+				charname = first
+				await _search(ctx, charname, command)
 
 
 # TODO 이게 뭘 하는 건지 파악해야 함.
@@ -200,6 +201,8 @@ async def _search(ctx, charname, string):
 		charname = db.name_ko(charname)
 		name_ko = charname
 		charname = db.en(charname)
+		if not re.search(re.compile("[a-zA-z]+"), charname):
+			return None 
 		logging.debug(charname)
 		logging.debug(string)
 		skname = string.strip()
@@ -209,20 +212,6 @@ async def _search(ctx, charname, string):
 		logging.info("커맨드 확인")
 		command = string.strip()
 		logging.debug(command)
-	# command = changer.cgr(command)
-	# logging.debug(command)
-	# logging.debug(command)
-	# k = '12'
-	# for j in k:
-	# 		logging.debug(j)
-	# 		logging.debug(command)
-	# command = command.upper()
-	# match = re.search(r"(.\.)", command)
-	# if match:
-	# 		# print(match.groups())
-	# 		for dot in match.groups():
-	# 				command = command.replace(dot, dot.lower(), 1)
-	# 				logging.debug(command)
 		command = db.command(command)
 		logging.debug(command)
 		query_str = ""
