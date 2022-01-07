@@ -13,89 +13,107 @@ from discord_slash import SlashCommand
 from dotenv import load_dotenv
 
 import blow
-import changer
+# import changer
 import db
-import kor_changer
-import nchanger
+# import kor_changer
+# import nchanger
 import numpy as np
 
 logging.basicConfig(level=logging.WARN)
 
-bot = discord.Client(intents=discord.Intents.all())
-slash = SlashCommand(bot, sync_commands=True)
 cmdbot = commands.Bot(command_prefix="/")
+# bot = discord.Client(intents=discord.Intents.all())
+bot = cmdbot
+client = bot
+slash = SlashCommand(bot, sync_commands=False)
+# cmdbot = commands.Bot(command_prefix="/")
 # 캐릭 목록
-charlist_path = os.path.dirname(os.path.abspath(__file__)) + "/캐릭목록.txt"
-o = open(charlist_path, "r", encoding="utf-8")
-charlist = o.read().split()
+# charlist_path = os.path.dirname(os.path.abspath(__file__)) + "/캐릭목록.txt"
+# o = open(charlist_path, "r", encoding="utf-8")
+# charlist = o.read().split()
 # 서버아이디
 guild_ids = bot.guilds
 #database
-dab = None
-dbb = sqlite3.connect("sklist.db")
+# dab = None
+# dbb = sqlite3.connect("sklist.db")
+channel = None
 
-
-def getDB():
-		warnings.warn("deprecated")
-		return None
+# def getDB():
+# 		return None
 
 
 @bot.event
 async def on_ready():
-		print('다음으로 로그인합니다: ')
-		print(bot.user.name)
-		print('connection was succesful')
-		await bot.change_presence(status=discord.Status.online, activity=discord.Game("'/명령어'로 기능확인"))
+	global channel
+	logging.info("클라이언트 확인")
+	logging.debug(client)
+	logging.info("채널 아이디 확인")
+	logging.debug(os.environ['channel_id'])
+	channel = client.get_channel(int(os.environ['channel_id']))
+	logging.info("채널 확인")
+	logging.debug(channel)
+	logging.info('다음으로 로그인합니다: ')
+	logging.debug(bot.user.name)
+	logging.info('connection was succesful')
+	await bot.change_presence(status=discord.Status.online, activity=discord.Game("'/명령어'로 기능확인"))
 
 
 @bot.event
 async def on_message(message):
-		logging.debug(message)
-		logging.debug(message.content)
-		arr = message.content.split()
-		logging.debug(arr)
-		first = ""
-		if len(arr) > 0:
-				first = arr[0].replace("/", "")
-		charname = ""
-		if len(arr) > 1:
-				charname = arr[1]
-		command = ""
-		if len(arr) > 2:
-				command = message.content.replace(first, "", 1).replace(charname, "", 1).strip()
-		ctx = message.channel
-		if not first:
-			logging.info("종료")
-		elif first == "명령어":
-				await _list(ctx)
-		elif first == "설명서":
-				await _tip(ctx)
-		elif first == "핑":
-				await _ping(ctx)
-		elif first in ["랜덤", "루나루", "Lunalu", "lunalu"]:
-				await _random(ctx)
-		# elif first == "루나루":
-		# 		await _random(ctx)
-		# elif first == "Lunalu":
-		# 		await _random(ctx)
-		elif first == "캐릭터":
-				await _char(ctx)
-		elif first == "공략":
-				await _walkthrough(ctx, charname)
-		elif first == "깃허브":
-				await _github(ctx)
-		elif first == "패턴":
-				await _pattern(ctx)
-		elif first == "별명":
-			await _move_nick(ctx, charname)
-		elif first in ["기술", "검색"]:
-				await _search(ctx, charname, command)
-		else:
-			if None:
-				logging.info("명령어 위치를 옮깁니다.")
-				command = "{arg1} {arg2}".format(arg1=charname, arg2=command)
-				charname = first
-				await _search(ctx, charname, command)
+	global channel
+	if not channel:
+		logging.error("empty channel")
+		raise
+	logging.debug(message)
+	logging.debug(message.content)
+	arr = message.content.split()
+	logging.debug(arr)
+	first = ""
+	if len(arr) > 0:
+			first = arr[0].replace("/", "")
+	charname = ""
+	if len(arr) > 1:
+			charname = arr[1]
+	command = ""
+	if len(arr) > 2:
+			command = message.content.replace(first, "", 1).replace(charname, "", 1).strip()
+	ctx = message.channel
+	logging.info("채널 확인")
+	logging.debug(channel)
+	if not ctx == channel:
+		logging.warning("wrong channel")
+		return None
+	if not first:
+		logging.info("종료")
+	elif first == "명령어":
+			await _list(ctx)
+	elif first == "설명서":
+			await _tip(ctx)
+	elif first == "핑":
+			await _ping(ctx)
+	elif first in ["랜덤", "루나루", "Lunalu", "lunalu"]:
+			await _random(ctx)
+	# elif first == "루나루":
+	# 		await _random(ctx)
+	# elif first == "Lunalu":
+	# 		await _random(ctx)
+	elif first == "캐릭터":
+			await _char(ctx)
+	elif first == "공략":
+			await _walkthrough(ctx, charname)
+	elif first == "깃허브":
+			await _github(ctx)
+	elif first == "패턴":
+			await _pattern(ctx)
+	elif first == "별명":
+		await _move_nick(ctx, charname)
+	elif first in ["기술", "검색"]:
+			await _search(ctx, charname, command)
+	else:
+			logging.info("명령어 위치를 옮깁니다.")
+			command = "{arg1} {arg2}".format(arg1=charname, arg2=command)
+			charname = first
+			await _search(ctx, charname, command)
 
 
 # TODO 이게 뭘 하는 건지 파악해야 함.
@@ -217,8 +235,7 @@ async def _search(ctx, charname, string):
 		query_str = ""
 		query_str += "WHERE case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
 		query_str += "AND case when trim(command) = '" + command + "' or trim(skname) like '" + skname + "' then 1 end is not null "
-		print(query_str)
-	# dab = getDB()
+		logging.debug(query_str)
 		rows = db.framedata(query_str)
 		if not rows:
 				await _skill(ctx, charname, command, skname)
@@ -405,3 +422,4 @@ async def _move_nick(ctx, name):
 
 load_dotenv()
 bot.run(os.environ['token'])
+
