@@ -19,39 +19,40 @@ import db
 # import nchanger
 import numpy as np
 
-logging.basicConfig(level=logging.WARN)
+load_dotenv()
+
+logging.basicConfig(level=logging.WARNING)
 
 cmdbot = commands.Bot(command_prefix="/")
-# bot = discord.Client(intents=discord.Intents.all())
 bot = cmdbot
 client = bot
+if not client:
+	logging.error("empty client")
+	raise
 slash = SlashCommand(bot, sync_commands=False)
-# cmdbot = commands.Bot(command_prefix="/")
-# 캐릭 목록
-# charlist_path = os.path.dirname(os.path.abspath(__file__)) + "/캐릭목록.txt"
-# o = open(charlist_path, "r", encoding="utf-8")
-# charlist = o.read().split()
-# 서버아이디
+logging.info("길드")
 guild_ids = bot.guilds
-#database
-# dab = None
-# dbb = sqlite3.connect("sklist.db")
+logging.debug(guild_ids)
+logging.info("채널")
 channel = None
-
-# def getDB():
-# 		return None
-
 
 @bot.event
 async def on_ready():
 	global channel
+	global guild_ids
 	logging.info("클라이언트 확인")
 	logging.debug(client)
-	logging.info("채널 아이디 확인")
+	logging.info("채널 확인")
 	logging.debug(os.environ['channel_id'])
 	channel = client.get_channel(int(os.environ['channel_id']))
+	if not channel:
+		logging.error("empty channel")
+		raise
 	logging.info("채널 확인")
 	logging.debug(channel)
+	logging.info("길드 확인")
+	guild_ids = [channel.guild.id]
+	logging.debug(guild_ids)
 	logging.info('다음으로 로그인합니다: ')
 	logging.debug(bot.user.name)
 	logging.info('connection was succesful')
@@ -116,17 +117,17 @@ async def on_message(message):
 			await _search(ctx, charname, command)
 
 
-# TODO 이게 뭘 하는 건지 파악해야 함.
 @cmdbot.command()
 async def pass_normal(ctx):
-		logging.info("ctx : " + ctx)
-		pass
+	logging.info("이것은 무엇인가?")
+	pass
 # commands
 
 
 @slash.slash(name="명령어", description='명령어 목록을 보여줍니다.', guild_ids=guild_ids)
 async def list(ctx):
-		await _list(ctx)
+	await validate(ctx)
+	await _list(ctx)
 
 
 async def _list(ctx):
@@ -148,7 +149,8 @@ async def _list(ctx):
 
 @slash.slash(name="핑", description='현재 핑 상태를 측정합니다.', guild_ids=guild_ids)
 async def ping(ctx):
-		await _ping(ctx)
+	await validate(ctx)
+	await _ping(ctx)
 
 
 async def _ping(ctx):
@@ -159,7 +161,8 @@ async def _ping(ctx):
 
 @slash.slash(name="설명서", description='파스티바_봇 사용설명서를 보여줍니다.', guild_ids=guild_ids)
 async def tip(ctx):
-		await _tip(ctx)
+	await validate(ctx)
+	await _tip(ctx)
 
 
 async def _tip(ctx):
@@ -178,7 +181,8 @@ async def _tip(ctx):
 
 @slash.slash(name="캐릭터", description='캐릭터들 목록과 영문 이름을 보여줍니다.', guild_ids=guild_ids)
 async def char(ctx):
-		await _char(ctx)
+	await validate(ctx)
+	await _char(ctx)
 
 
 async def _char(ctx):
@@ -212,7 +216,8 @@ async def _char(ctx):
 
 @slash.slash(name="검색", description='해당 캐릭터의 기술의 프레임데이터를 보여줍니다.', guild_ids=guild_ids)
 async def search(ctx, charname, command):
-		await _search(ctx, charname, command)
+	await validate(ctx)
+	await _search(ctx, charname, command)
 
 
 async def _search(ctx, charname, string):
@@ -288,7 +293,8 @@ async def _search(ctx, charname, string):
 
 @slash.slash(name='기술', description='해당 캐릭터의 기술의 프레임데이터를 보여줍니다.', guild_ids=guild_ids)
 async def skill(ctx, character, command):
-		await _search(ctx, character, command)
+	await validate(ctx)
+	await _search(ctx, character, command)
 
 
 async def _skill(ctx, charname, command, skname):
@@ -324,7 +330,8 @@ async def _skill(ctx, charname, command, skname):
 
 @slash.slash(name="공략", description='해당 캐릭터의 공략글을 보여줍니다.', guild_ids=guild_ids)
 async def walkthrough(ctx, charname):
-		await _walkthrough(ctx, charname)
+	await validate(ctx)
+	await _walkthrough(ctx, charname)
 
 
 async def _walkthrough(ctx, charname):
@@ -340,17 +347,20 @@ async def _walkthrough(ctx, charname):
 
 @slash.slash(name="랜덤", description='랜덤으로 아무 캐릭터나 뽑아줍니다.', guild_ids=guild_ids)
 async def rand(ctx):
-		await _random(ctx)
+	await validate(ctx)
+	await _random(ctx)
 
 
 @slash.slash(name="루나루", description='랜덤으로 아무 캐릭터나 뽑아줍니다.', guild_ids=guild_ids)
 async def lunalu(ctx):
-		await _random(ctx)
+	await validate(ctx)
+	await _random(ctx)
 
 
 @slash.slash(name="Lunalu", description='Get randomized name.', guild_ids=guild_ids)
 async def lunalu(ctx):
-		await _random(ctx)
+	await validate(ctx)
+	await _random(ctx)
 
 
 async def _random(ctx):
@@ -363,7 +373,8 @@ async def _random(ctx):
 
 @slash.slash(name="깃허브", description='파스티바_봇의 깃허브 링크를 보여줍니다.', guild_ids=guild_ids)
 async def github(ctx):
-		await _github(ctx)
+	await validate(ctx)
+	await _github(ctx)
 
 
 async def _github(ctx):
@@ -373,6 +384,7 @@ async def _github(ctx):
 
 @slash.slash(name="패턴", description="검색 가능한 커맨드 패턴을 보여줍니다.", guild_ids=guild_ids)
 async def pattern(ctx):
+	await validate(ctx)
 	await _pattern(ctx)
 
 	
@@ -397,6 +409,7 @@ async def _pattern(ctx):
 
 @slash.slash(name="별명", description="해당 캐릭터의 기술에 대한 별명을 보여줍니다. ", guild_ids=guild_ids)
 async def move_nick(ctx, name):
+	await validate(ctx)
 	await _move_nick(ctx, name)
 
 
@@ -420,6 +433,22 @@ async def _move_nick(ctx, name):
 	return messages
 
 
-load_dotenv()
+async def validate(ctx):
+	global channel
+	logging.debug(ctx)
+	if not channel:
+		logging.error("empty channel")
+		raise
+	if not ctx.channel_id == channel.id:
+		logging.warning("wrong channel")
+		embed = discord.Embed(title="안내", description="허용되지 않은 채널입니다.", color=0xb377ee)
+		await ctx.send(embed=embed)
+		raise
+	else:
+		return True
+	return False
+
+
+# load_dotenv()
 bot.run(os.environ['token'])
 
