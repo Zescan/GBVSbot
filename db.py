@@ -177,6 +177,8 @@ def move_nick(name):
 
 
 def on(pattern):
+	if not pattern:
+		return pattern
 	with con:
 		replace = pattern
 		cur = con.cursor()
@@ -184,3 +186,4 @@ def on(pattern):
 		for row in cur.fetchall():
 			replace = replace.replace(row['pattern'], row['replace'])
 		return replace
+	return pattern
