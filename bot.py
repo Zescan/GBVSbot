@@ -278,7 +278,7 @@ async def _search(ctx, charname, string):
 		# CLASH_LEVEL = col
 		# col += 1
 				for row in rows:
-					info_dic = {'데미지': (row['damage'] or "-").replace("*", "x"),
+					info_dic = {'데미지': db.damage(row['damage']) or "-",
 						'가드판정': row['guard_ko'] or row['guard'],
 						'시동 프레임': row['startup'],
 						'지속 프레임': row['active'],
