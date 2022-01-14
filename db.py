@@ -187,3 +187,20 @@ def on(pattern):
 			replace = replace.replace(row['pattern'], row['replace'])
 		return replace
 	return pattern
+
+
+def replace(pattern, table):
+	if not pattern:
+		return pattern
+	with con:
+		replace = pattern
+		cur = con.cursor()
+		cur.execute("select * from {table} order by length(pattern) desc, length(replace) DESC, priority, pattern desc, replace desc".format(table=table))
+		for row in cur.fetchall():
+			replace = re.sub(re.compile(row['pattern']), row['replace'], replace)
+		return replace
+	return pattern
+
+
+def damage(pattern):
+	return replace(pattern, "damage")
