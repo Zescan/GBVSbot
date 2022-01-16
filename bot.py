@@ -239,7 +239,7 @@ async def _search(ctx, charname, string):
 		logging.debug(command)
 		query_str = ""
 		query_str += "WHERE case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
-		query_str += "AND case when trim(command) = '" + command + "' or trim(skname) like '" + skname + "' then 1 end is not null "
+		query_str += "AND case when trim(command) = '" + command + "' or trim(move_name_ko) like '" + skname + "' then 1 end is not null "
 		logging.debug(query_str)
 		rows = db.framedata(query_str)
 		if not rows:
@@ -281,8 +281,8 @@ async def _search(ctx, charname, string):
 					info_dic = {'데미지': db.damage(row['damage']) or "-",
 						'가드판정': row['guard_ko'] or row['guard'],
 						'시동 프레임': row['startup'],
-						'지속 프레임': row['active'],
-						'회수 프레임': row['recovery'],
+						'지속 프레임': db.active(row['active']),
+						'회수 프레임': db.recovery(row['recovery']),
 						'가드시 이득': db.on(row['onblock']),
 						'히트시 이득': db.on(row['onhit']),
 						'공격레벨': row['attack_level'],
