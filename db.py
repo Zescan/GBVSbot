@@ -147,10 +147,13 @@ def move(name, move_nick):
 		move = move_nick
 		for row in cur.fetchall():
 			move = move.replace(row['move_nick'], row['move'])
-			cur.execute("select * from framedata where skname = :skname", {"skname": move})
-			rows = cur.fetchall()
-			if rows:
-				return move
+			cur.execute("select * from framedata where move_name_ko = :move_name_ko", {"move_name_ko": move})
+# 			rows = cur.fetchall()
+# 			if rows:
+# 				return move
+			row = cur.fetchone()
+			if row:
+				return row["move_name_ko"]
 		return move
 
 
@@ -204,3 +207,11 @@ def replace(pattern, table):
 
 def damage(pattern):
 	return replace(pattern, "damage")
+
+
+def active(pattern):
+	return replace(pattern, "active")
+
+
+def recovery(pattern):
+	return replace(pattern, "recovery")
