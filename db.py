@@ -145,11 +145,11 @@ def move(name, move_nick):
 	logging.debug(move_nick)
 	with con:
 		cur = con.cursor()
-		cur.execute("select * from move_nick where name = :name order by length(move) desc, length(move_nick) desc, move desc, move_nick desc", {"name": name})
+		cur.execute("select * from move_nick where name = :name order by priority, length(move) desc, length(move_nick) desc, move desc, move_nick desc", {"name": name})
 		move = move_nick
 		for row in cur.fetchall():
 			move = move.replace(row['move_nick'], row['move'])
-			cur.execute("select * from framedata where move_name_ko = :move_name_ko", {"move_name_ko": move})
+			cur.execute("select * from framedata where charname = :charname and move_name_ko = :move_name_ko", {"charname": name, "move_name_ko": move})
 			row = cur.fetchone()
 			if row:
 				return row["move_name_ko"]
@@ -162,11 +162,11 @@ def _command(name, command_nick):
 	logging.debug(command_nick)
 	with con:
 		cur = con.cursor()
-		cur.execute("select * from {category}_nick where name = :name order by length({category}) desc, length({category}_nick) desc, {category} desc, {category}_nick desc".format(category="command"), {"name": name})
+		cur.execute("select * from {category}_nick where name = :name order by priority, length({category}) desc, length({category}_nick) desc, {category} desc, {category}_nick desc".format(category="command"), {"name": name})
 		command = command_nick
 		for row in cur.fetchall():
 			command = re.sub(re.compile(row['command_nick']), row['command'], command)
-			cur.execute("select * from framedata where command = :command", {"command": command})
+			cur.execute("select * from framedata where charname = :charname and command = :command", {"charname": name, "command": command})
 			row = cur.fetchone()
 			if row:
 				return row["command"]
@@ -221,7 +221,7 @@ def replace(pattern, table):
 	with con:
 		replace = pattern
 		cur = con.cursor()
-		cur.execute("select * from {table} order by length(pattern) desc, length(replace) DESC, priority, pattern desc, replace desc".format(table=table))
+		cur.execute("select * from {table} order by priority, length(pattern) desc, length(replace) DESC, pattern desc, replace desc".format(table=table))
 		for row in cur.fetchall():
 			replace = re.sub(re.compile(row['pattern']), row['replace'], replace)
 		return replace
