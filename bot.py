@@ -21,7 +21,7 @@ import numpy as np
 
 load_dotenv()
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.DEBUG)
 
 cmdbot = commands.Bot(command_prefix="/")
 bot = cmdbot
@@ -236,6 +236,8 @@ async def _search(ctx, charname, string):
 		command = string.strip()
 		logging.debug(command)
 		command = db.command(command)
+		logging.debug(command)
+		command = db._command(charname, command)
 		logging.debug(command)
 		query_str = ""
 		query_str += "WHERE case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
