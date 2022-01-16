@@ -69,13 +69,15 @@ def char():
 
 
 def en(ko):
+	if not ko:
+		return None
 	with con:
 		cur = con.cursor()
 		query = "select en from name where ko = '{ko}'".format(ko=ko)
 		cur.execute(query)
 		row = cur.fetchone()
 		if not row:
-			return ko
+			return ko.capitalize()
 		return row['en']
 
 
