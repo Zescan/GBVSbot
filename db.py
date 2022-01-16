@@ -150,13 +150,27 @@ def move(name, move_nick):
 		for row in cur.fetchall():
 			move = move.replace(row['move_nick'], row['move'])
 			cur.execute("select * from framedata where move_name_ko = :move_name_ko", {"move_name_ko": move})
-# 			rows = cur.fetchall()
-# 			if rows:
-# 				return move
 			row = cur.fetchone()
 			if row:
 				return row["move_name_ko"]
 		return move
+
+
+def _command(name, command_nick):
+	logging.info("커맨드 별명에서 커맨드를 검색합니다.")
+	logging.debug(name)
+	logging.debug(command_nick)
+	with con:
+		cur = con.cursor()
+		cur.execute("select * from {category}_nick where name = :name order by length({category}) desc, length({category}_nick) desc, {category} desc, {category}_nick desc".format(category="command"), {"name": name})
+		command = command_nick
+		for row in cur.fetchall():
+			command = re.sub(re.compile(row['command_nick']), row['command'], command)
+			cur.execute("select * from framedata where command = :command", {"command": command})
+			row = cur.fetchone()
+			if row:
+				return row["command"]
+		return command
 
 
 def list():
@@ -178,6 +192,13 @@ def move_nick(name):
 	with con:
 		cur = con.cursor()
 		cur.execute("select * from move_nick where name = :name order by length(move) desc, length(move_nick) desc, move desc, move_nick desc", {"name": name})
+		return cur.fetchall()
+
+
+def command_nick(name):
+	with con:
+		cur = con.cursor()
+		cur.execute("select * from {category}_nick where name = :name order by length({category}) desc, length({category}_nick) desc, {category} desc, {category}_nick desc".format(category="command"), {"name": name})
 		return cur.fetchall()
 
 
