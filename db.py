@@ -77,7 +77,7 @@ def en(ko):
 		cur.execute(query)
 		row = cur.fetchone()
 		if not row:
-			return ko.capitalize()
+			return capitalize(ko)
 		return row['en']
 
 
@@ -238,3 +238,19 @@ def active(pattern):
 
 def recovery(pattern):
 	return replace(pattern, "recovery")
+
+
+def capitalize(en):
+	if not en:
+		return en
+	arr = re.split(re.compile("[^A-Za-z]"), en)
+	if not arr:
+		return en 
+	elif len(arr) <= 1:
+		return en.capitalize()
+	else:
+		merged = ""
+		for each in arr:
+			merged += "_" + each.capitalize()
+		merged = merged.replace("_", "", 1)
+		return merged 
