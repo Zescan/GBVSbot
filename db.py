@@ -110,7 +110,7 @@ def command(pattern):
 	with con:
 		replace = pattern
 		cur = con.cursor()
-		cur.execute("select * from command order by length(pattern) desc, length(replace) DESC, pattern desc, replace desc")
+		cur.execute("select * from command order by priority, length(pattern) desc, length(replace) DESC, pattern desc, replace desc")
 		for row in cur.fetchall():
 			# replace = replace.replace(row['pattern'], row['replace'])
 			replace = re.sub(re.compile(row['pattern']), row['replace'], replace)
