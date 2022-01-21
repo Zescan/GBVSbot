@@ -5,13 +5,15 @@ import warnings
 
 con = sqlite3.connect("./db.db")
 con.row_factory = sqlite3.Row
+con.set_trace_callback(logging.debug)
+
 
 def framedata(query_str=''):
 		with con:
 				cur = con.cursor()
 				if bool(query_str):
 						query_str = ' ' + query_str
-				execute_str = 'select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from (SELECT * FROM framedata ' + query_str + " ) _framedata left join guard on (_framedata.guard = guard.en) "
+				execute_str = "select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from (SELECT * FROM framedata {query_str} ) _framedata left join guard on (_framedata.guard = guard.en) ".format(query_str=query_str)
 				execute_str += " left join name on (_framedata.charname = name.en) order by odr "
 				cur.execute(execute_str)
 				row = cur.fetchone()
@@ -21,42 +23,61 @@ def framedata(query_str=''):
 				rows = cur.fetchall()
 				return rows
 
-# def _db_table(db, query_str=''):
-# 		with db:
-# 			cur = db.cursor()
-# 			if bool(query_str):
-# 					query_str = ' ' + query_str
-# 			execute_str = 'SELECT * FROM framedata' + query_str
-# 			cur.execute(execute_str)
-# 			rows = cur.fetchall()
-# 			return rows
 
-# db>데이터베이스 연결 , query>캐릭명
-# def db_sktable(query_=''):
-# 		with con:
-# 				cur = con.cursor()
-# 				if bool(query_):
-# 						query_ = ' ' + query_
-# 				execute_ = 'SELECT * FROM framedata' + query_
-# 				cur.execute(execute_)
-# 				row = cur.fetchone()
-# 				if row:
-# 					logging.debug(row.keys())
-# 				cur.execute(execute_)
-# 				rows = cur.fetchall()
-# 				return rows
+def fromCommand(charname, command):
+	with con:
+		cur = con.cursor()
+		cur.execute((
+			" select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from ( "
+			" SELECT * FROM framedata "
+			" WHERE case when :charname in (trim(charname)) then 1 end is not null "
+			" and trim(replace(command, ' ', '')) = replace(:command, ' ', '') "
+			" ) _framedata left join guard on (_framedata.guard = guard.en) "
+			" left join name on (_framedata.charname = name.en) "
+			" order by odr "
+			), {"charname": charname, "command": command})
+		rows = cur.fetchall()
+		if len(rows) == 1:
+			return rows
+		cur.execute((
+			" select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from ( "
+			" SELECT * FROM framedata "
+			" WHERE case when :charname in (trim(charname)) then 1 end is not null "
+			" and instr(trim(replace(command, ' ', '')), replace(:command, ' ', '')) > 0 "
+			" ) _framedata left join guard on (_framedata.guard = guard.en) "
+			" left join name on (_framedata.charname = name.en) "
+			" order by odr "
+			), {"charname": charname, "command": command})
+		rows = cur.fetchall()
+		return rows
 
 
-# db>데이터베이스 연결 , query>캐릭명
-# def _db_sktable(db, query_=''):
-# 		with db:
-# 			cur = db.cursor()
-# 			if bool(query_):
-# 					query_ = ' ' + query_
-# 			execute_ = 'SELECT * FROM framedata' + query_
-# 			cur.execute(execute_)
-# 			rows = cur.fetchall()
-# 			return rows
+def fromSkill(charname, move_name_ko):
+	with con:
+		cur = con.cursor()
+		cur.execute((
+			" select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from ( "
+			" SELECT * FROM framedata "
+			" WHERE case when :charname in (trim(charname)) then 1 end is not null "
+			" and trim(replace(move_name_ko, ' ', '')) = replace(:move_name_ko, ' ', '') "
+			" ) _framedata left join guard on (_framedata.guard = guard.en) "
+			" left join name on (_framedata.charname = name.en) "
+			" order by odr "
+			), {"charname": charname, "move_name_ko": move_name_ko})
+		rows = cur.fetchall()
+		if len(rows) == 1:
+			return rows
+		cur.execute((
+			" select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from ( "
+			" SELECT * FROM framedata "
+			" WHERE case when :charname in (trim(charname)) then 1 end is not null "
+			" and instr(trim(replace(move_name_ko, ' ', '')), replace(:move_name_ko, ' ', '')) > 0 "
+			" ) _framedata left join guard on (_framedata.guard = guard.en) "
+			" left join name on (_framedata.charname = name.en) "
+			" order by odr "
+			), {"charname": charname, "move_name_ko": move_name_ko})
+		rows = cur.fetchall()
+		return rows
 
 
 def char():
