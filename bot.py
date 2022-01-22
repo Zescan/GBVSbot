@@ -23,6 +23,9 @@ load_dotenv()
 
 logging.basicConfig(level=logging.WARN)
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.WARN)
+
 cmdbot = commands.Bot(command_prefix="/")
 bot = cmdbot
 client = bot
@@ -62,6 +65,8 @@ async def on_ready():
 @bot.event
 async def on_message(message):
 	global channel
+	on_message__logger = logging.getLogger("on_message")
+	on_message__logger.setLevel(logging.ERROR)
 	if not channel:
 		logging.error("empty channel")
 		raise
@@ -82,7 +87,7 @@ async def on_message(message):
 	logging.info("채널 확인")
 	logging.debug(channel)
 	if not ctx == channel:
-		logging.warning("wrong channel")
+		on_message__logger.warning("wrong channel")
 		return None
 	if not first:
 		logging.info("종료")
@@ -221,48 +226,51 @@ async def search(ctx, charname, command):
 
 
 async def _search(ctx, charname, string):
-		charname = db.name_ko(charname)
-		name_ko = charname
-		charname = db.en(charname)
-		if not re.search(re.compile("[a-zA-z]+"), charname):
-			return None 
-		logging.debug(charname)
-		logging.debug(string)
-		skname = string.strip()
-		logging.debug(skname)
-		skname = db.move(name_ko, skname)
-		logging.debug(skname)
-		logging.info("커맨드 확인")
-		command = string.strip()
-		logging.debug(command)
-		command = db.command(command)
-		logging.debug(command)
-		command = db._command(charname, command)
-		logging.debug(command)
-		rows = None
-		commands = db.fromCommand(charname, command)
-		skills = db.fromSkill(charname, skname)
-		if len(commands) == 1:
-			rows = commands
-		if len(skills) == 1:
-			rows = skills
-		if not rows:
-				await _skill(ctx, charname, command, skname)
-				embed = discord.Embed(title="[캐릭 이름] [커맨드/기술명]", description="특정 기술에 대해서는 위와 같이 입력해주세요.", color=0xedf11e)
-				await ctx.send(embed=embed)
-		else:
-				for row in rows:
-					info_dic = {'데미지': db.damage(row['damage']) or "-",
-						'가드판정': row['guard_ko'] or row['guard'],
-						'시동 프레임': row['startup'],
-						'지속 프레임': db.active(row['active']),
-						'회수 프레임': db.recovery(row['recovery']),
-						'가드시 이득': db.on(row['onblock']),
-						'히트시 이득': db.on(row['onhit']),
-						'공격레벨': row['attack_level'],
-						'상쇄레벨': row['clash_level'],
-						}
-					await blow.t_embed(ctx, row['name_ko'] + " - " + row['command'], row['move_name_ko'] or row['skname'] or row['command'], info_dic, db.icon(row['charname']), db.images(row['charname'], row['command']))
+	_search__logger = logging.getLogger("_search")
+	_search__logger.setLevel(logging.INFO)
+	_search__logger.info("캐릭 이름을 확인합니다.")
+	charname = db.name_ko(charname)
+	name_ko = charname
+	charname = db.en(charname)
+	if not re.search(re.compile("[a-zA-z]+"), charname):
+		return None
+	logging.debug(charname)
+	logging.debug(string)
+	skname = string.strip()
+	logger.debug(skname)
+	skname = db.move(name_ko, skname)
+	logger.debug(skname)
+	logging.info("커맨드 확인")
+	command = string.strip()
+	logging.debug(command)
+	command = db.command(command)
+	logging.debug(command)
+	command = db._command(charname, command)
+	logging.debug(command)
+	rows = None
+	commands = db.fromCommand(charname, command)
+	skills = db.fromSkill(charname, skname)
+	if len(commands) == 1:
+		rows = commands
+	if len(skills) == 1:
+		rows = skills
+	if not rows:
+			await _skill(ctx, charname, command, skname)
+			embed = discord.Embed(title="[캐릭 이름] [커맨드/기술명]", description="특정 기술에 대해서는 위와 같이 입력해주세요.", color=0xedf11e)
+			await ctx.send(embed=embed)
+	else:
+			for row in rows:
+				info_dic = {'데미지': db.damage(row['damage']) or "-",
+					'가드판정': row['guard_ko'] or row['guard'],
+					'시동 프레임': row['startup'],
+					'지속 프레임': db.active(row['active']),
+					'회수 프레임': db.recovery(row['recovery']),
+					'가드시 이득': db.on(row['onblock']),
+					'히트시 이득': db.on(row['onhit']),
+					'공격레벨': row['attack_level'],
+					'상쇄레벨': row['clash_level'],
+					}
+				await blow.t_embed(ctx, row['name_ko'] + " - " + row['command'], row['move_name_ko'] or row['skname'] or row['command'], info_dic, db.icon(row['charname']), db.images(row['charname'], row['command']))
 
 
 @slash.slash(name='기술', description='해당 캐릭터의 기술의 프레임데이터를 보여줍니다.', guild_ids=guild_ids)
@@ -408,12 +416,14 @@ async def _move_nick(ctx, name):
 
 async def validate(ctx):
 	global channel
+	validate_logger = logging.getLogger("validate")
+	validate_logger.setLevel(logging.ERROR)
 	logging.debug(ctx)
 	if not channel:
 		logging.error("empty channel")
 		raise
 	if not ctx.channel_id == channel.id:
-		logging.warning("wrong channel")
+		validate_logger.warning("wrong channel")
 		embed = discord.Embed(title="안내", description="허용되지 않은 채널입니다.", color=0xb377ee)
 		await ctx.send(embed=embed)
 		raise
