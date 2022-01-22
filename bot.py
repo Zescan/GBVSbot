@@ -21,7 +21,7 @@ import numpy as np
 
 load_dotenv()
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.DEBUG)
 
 cmdbot = commands.Bot(command_prefix="/")
 bot = cmdbot
@@ -239,46 +239,18 @@ async def _search(ctx, charname, string):
 		logging.debug(command)
 		command = db._command(charname, command)
 		logging.debug(command)
-		query_str = ""
-		query_str += "WHERE case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
-		query_str += "AND case when trim(command) = '" + command + "' or trim(move_name_ko) like '" + skname + "' then 1 end is not null "
-		logging.debug(query_str)
-		rows = db.framedata(query_str)
+		rows = None
+		commands = db.fromCommand(charname, command)
+		skills = db.fromSkill(charname, skname)
+		if len(commands) == 1:
+			rows = commands
+		if len(skills) == 1:
+			rows = skills
 		if not rows:
 				await _skill(ctx, charname, command, skname)
 				embed = discord.Embed(title="[캐릭 이름] [커맨드/기술명]", description="특정 기술에 대해서는 위와 같이 입력해주세요.", color=0xedf11e)
 				await ctx.send(embed=embed)
 		else:
-		# col = 0
-		# CHARNAME = col
-		# col += 1
-		# COMMAND = col
-		# col += 1
-		# col += 1
-		# DAMAGE = col
-		# col += 1
-		# GUARD = col
-		# col += 1
-		# STARTUP = col
-		# col += 1
-		# ACTIVE = col
-		# col += 1
-		# RECOVERY = col
-		# col += 1
-		# ONBLOCK = col
-		# col += 1
-		# ONHIT = col
-		# col += 1
-		# ICON = col
-		# col += 1
-		# IMAGE = col
-		# col += 1
-		# ODR = col
-		# col += 1
-		# ATTACK_LEVEL = col
-		# col += 1
-		# CLASH_LEVEL = col
-		# col += 1
 				for row in rows:
 					info_dic = {'데미지': db.damage(row['damage']) or "-",
 						'가드판정': row['guard_ko'] or row['guard'],
@@ -301,23 +273,22 @@ async def skill(ctx, character, command):
 
 async def _skill(ctx, charname, command, skname):
 		charname = db.name_ko(charname)
-	# charname = character.capitalize()
 		charname = db.en(charname)
 		logging.debug(charname)
 		query_ = " where 1=1 "
 		query_ += " and case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
 		if command or skname:
 			query_ += " and case when 0=1 "
-			for part in re.findall(re.compile("[^0-9]"), command):
-				query_ += " or instr(trim(command), '{part}') > 0 ".format(part=part)
+			for part in re.findall(re.compile("[^0-9]+"), command):
+				query_ += " or instr(trim(replace(command, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
 			for part in re.findall(re.compile("[0-9]+"), command):
-				query_ += " or instr(trim(command), '{part}') > 0 ".format(part=part)
-			for part in re.findall(re.compile("[약중강특]"), skname):
-				query_ += " or instr(trim(move_name_ko), '{part}') > 0 ".format(part=part)
+				query_ += " or instr(trim(replace(command, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
+			for part in re.findall(re.compile("[약중강특]+"), skname):
+				query_ += " or instr(trim(replace(move_name_ko, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
 			for part in re.findall(re.compile("[^약중강특]+"), skname):
-				query_ += " or instr(trim(move_name_ko), '{part}') > 0 ".format(part=part)
+				query_ += " or instr(trim(replace(move_name_ko, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
 			query_ += " then 1 end is not null "
-		logging.debug(query_)
+#		logging.debug(query_)
 		rows = db.framedata(query_)
 		if not rows:
 				embed = discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
