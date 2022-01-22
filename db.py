@@ -3,9 +3,11 @@ import re
 import sqlite3
 import warnings
 
+logger = logging.getLogger(__name__)
+
 con = sqlite3.connect("./db.db")
 con.row_factory = sqlite3.Row
-con.set_trace_callback(logging.debug)
+con.set_trace_callback(logger.debug)
 
 
 def framedata(query_str=''):
@@ -162,18 +164,29 @@ def icon(name):
 
 def move(name, move_nick):
 	logging.info("기술 별명에서 기술을 검색합니다.")
-	logging.debug(name)
-	logging.debug(move_nick)
+	move_logger = logging.getLogger(__name__)
+	move_logger.setLevel(logging.WARN)
+	move_logger.debug(name)
+	move_logger.debug(move_nick)
 	with con:
 		cur = con.cursor()
-		cur.execute("select * from move_nick where name = :name order by priority, length(move) desc, length(move_nick) desc, move desc, move_nick desc", {"name": name})
+		cur.execute("select * from move_nick where name = :name and disabled is null order by priority, length(move) desc, length(move_nick) desc, move desc, move_nick desc", {"name": name})
 		move = move_nick
 		for row in cur.fetchall():
-			move = move.replace(row['move_nick'], row['move'])
-			cur.execute("select * from framedata where charname = :charname and move_name_ko = :move_name_ko", {"charname": name, "move_name_ko": move})
+			move_logger.info("move pattern exists")
+			move_logger.debug(row['move_nick'])
+#			move = move.replace(row['move_nick'], row['move'])
+			move = re.sub(re.compile(row['move_nick']), row['move'], move)
+			move_logger.debug(move)
+			cur.execute("select * from framedata where :charname in (charname, _name_ko) and instr(move_name_ko, :move_name_ko) > 0 ", {"charname": name, "move_name_ko": move})
 			row = cur.fetchone()
-			if row:
+			if not row:
+				continue
+			if len(row) == 1:
+				move_logger.info("move exists")
 				return row["move_name_ko"]
+			else:
+				return move
 		return move
 
 
