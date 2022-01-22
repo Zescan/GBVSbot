@@ -130,13 +130,15 @@ def ko_name(nickname):
 
 
 def command(pattern):
+	command_logger = logging.getLogger("command")
+	command_logger.setLevel(logging.WARN)
 	with con:
 		replace = pattern
 		cur = con.cursor()
-		cur.execute("select * from command order by priority, length(pattern) desc, length(replace) DESC, pattern desc, replace desc")
+		cur.execute("select * from command order by priority, length(replace) DESC, length(pattern) desc, pattern desc, replace desc")
 		for row in cur.fetchall():
-			# replace = replace.replace(row['pattern'], row['replace'])
 			replace = re.sub(re.compile(row['pattern']), row['replace'], replace)
+		command_logger.debug(replace)
 		return replace
 
 
