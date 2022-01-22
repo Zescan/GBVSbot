@@ -21,7 +21,7 @@ import numpy as np
 
 load_dotenv()
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARN)
 
 cmdbot = commands.Bot(command_prefix="/")
 bot = cmdbot
