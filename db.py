@@ -4,6 +4,7 @@ import sqlite3
 import warnings
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.WARN)
 
 con = sqlite3.connect("./db.db")
 con.row_factory = sqlite3.Row
@@ -27,6 +28,9 @@ def framedata(query_str=''):
 
 
 def fromCommand(charname, command):
+	fromCommand_logger = logging.getLogger("fromCommand")
+	fromCommand_logger.setLevel(logging.WARN)
+	fromCommand_logger.info("커맨드에서 프레임데이터 검색")
 	with con:
 		cur = con.cursor()
 		cur.execute((
@@ -40,7 +44,9 @@ def fromCommand(charname, command):
 			), {"charname": charname, "command": command})
 		rows = cur.fetchall()
 		if len(rows) == 1:
+			fromCommand_logger.info("단일 결과 확인")
 			return rows
+		fromCommand_logger.info("유사 결과 검색")
 		cur.execute((
 			" select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from ( "
 			" SELECT * FROM framedata "
@@ -116,11 +122,17 @@ def ko(en):
 
 
 def name_ko(nickname):
+	name_ko__logger = logging.getLogger("name_ko")
+	name_ko__logger.setLevel(logging.WARN)
+	name_ko__logger.debug(nickname)
 	with con:
 		cur = con.cursor()
 		cur.execute("select * from nickname order by priority")
 		for row in cur.fetchall():
+			name_ko__logger.info("다음 패턴으로 확인")
+			name_ko__logger.debug(row['regex'])
 			if re.search(row['regex'], nickname):
+				name_ko__logger.debug(row['ko'])
 				return row['ko']
 		return nickname
 
@@ -180,7 +192,7 @@ def move(name, move_nick):
 #			move = move.replace(row['move_nick'], row['move'])
 			move = re.sub(re.compile(row['move_nick']), row['move'], move)
 			move_logger.debug(move)
-			cur.execute("select * from framedata where :charname in (charname, _name_ko) and instr(move_name_ko, :move_name_ko) > 0 ", {"charname": name, "move_name_ko": move})
+			cur.execute("select * from framedata where :charname in (charname) and instr(move_name_ko, :move_name_ko) > 0 ", {"charname": name, "move_name_ko": move})
 			row = cur.fetchone()
 			if not row:
 				continue
@@ -193,16 +205,20 @@ def move(name, move_nick):
 
 
 def _command(name, command_nick):
-	logging.info("커맨드 별명에서 커맨드를 검색합니다.")
-	logging.debug(name)
-	logging.debug(command_nick)
+	_command__logger = logging.getLogger("_command")
+	_command__logger.setLevel(logging.DEBUG)
+	_command__logger.info("커맨드 별명에서 커맨드를 검색합니다.")
+	_command__logger.debug(name)
+	_command__logger.debug(command_nick)
+	if not command_nick:
+		return command_nick
 	with con:
 		cur = con.cursor()
 		cur.execute("select * from {category}_nick where name = :name order by priority, length({category}) desc, length({category}_nick) desc, {category} desc, {category}_nick desc".format(category="command"), {"name": name})
 		command = command_nick
 		for row in cur.fetchall():
 			command = re.sub(re.compile(row['command_nick']), row['command'], command)
-			cur.execute("select * from framedata where charname = :charname and command = :command", {"charname": name, "command": command})
+			cur.execute("select * from framedata where charname = :charname and instr(command, :command) > 0 ", {"charname": name, "command": command})
 			row = cur.fetchone()
 			if row:
 				return row["command"]
