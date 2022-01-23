@@ -147,7 +147,7 @@ def command(pattern):
 	with con:
 		replace = pattern
 		cur = con.cursor()
-		cur.execute("select * from command order by priority, length(replace) DESC, length(pattern) desc, pattern desc, replace desc")
+		cur.execute("select * from command where disabled is null order by priority, length(replace) DESC, length(pattern) desc, pattern desc, replace desc")
 		for row in cur.fetchall():
 			replace = re.sub(re.compile(row['pattern']), row['replace'], replace)
 		command_logger.debug(replace)
@@ -206,7 +206,7 @@ def move(name, move_nick):
 
 def _command(name, command_nick):
 	_command__logger = logging.getLogger("_command")
-	_command__logger.setLevel(logging.DEBUG)
+	_command__logger.setLevel(logging.WARN)
 	_command__logger.info("커맨드 별명에서 커맨드를 검색합니다.")
 	_command__logger.debug(name)
 	_command__logger.debug(command_nick)
