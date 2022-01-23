@@ -227,7 +227,7 @@ async def search(ctx, charname, command):
 
 async def _search(ctx, charname, string):
 	_search__logger = logging.getLogger("_search")
-	_search__logger.setLevel(logging.INFO)
+	_search__logger.setLevel(logging.WARN)
 	_search__logger.info("캐릭 이름을 확인합니다.")
 	charname = db.name_ko(charname)
 	name_ko = charname
