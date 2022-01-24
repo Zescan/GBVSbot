@@ -296,7 +296,6 @@ async def _skill(ctx, charname, command, skname):
 			for part in re.findall(re.compile("[^약중강특]+"), skname):
 				query_ += " or instr(trim(replace(move_name_ko, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
 			query_ += " then 1 end is not null "
-#		logging.debug(query_)
 		rows = db.framedata(query_)
 		if not rows:
 				embed = discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
@@ -339,7 +338,7 @@ async def lunalu(ctx):
 
 
 @slash.slash(name="Lunalu", description='Get randomized name.', guild_ids=guild_ids)
-async def lunalu(ctx):
+async def Lunalu(ctx):
 	await validate(ctx)
 	await _random(ctx)
 
