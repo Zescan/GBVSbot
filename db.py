@@ -143,7 +143,7 @@ def ko_name(nickname):
 
 def command(pattern):
 	command_logger = logging.getLogger("command")
-	command_logger.setLevel(logging.WARN)
+	command_logger.setLevel(logging.WARNING)
 	with con:
 		replace = pattern
 		cur = con.cursor()
@@ -179,7 +179,7 @@ def icon(name):
 def move(name, move_nick):
 	logging.info("기술 별명에서 기술을 검색합니다.")
 	move_logger = logging.getLogger(__name__)
-	move_logger.setLevel(logging.WARN)
+	move_logger.setLevel(logging.WARNING)
 	move_logger.debug(name)
 	move_logger.debug(move_nick)
 	with con:
@@ -206,7 +206,7 @@ def move(name, move_nick):
 
 def _command(name, command_nick):
 	_command__logger = logging.getLogger("_command")
-	_command__logger.setLevel(logging.WARN)
+	_command__logger.setLevel(logging.WARNING)
 	_command__logger.info("커맨드 별명에서 커맨드를 검색합니다.")
 	_command__logger.debug(name)
 	_command__logger.debug(command_nick)
@@ -218,7 +218,8 @@ def _command(name, command_nick):
 		command = command_nick
 		for row in cur.fetchall():
 			command = re.sub(re.compile(row['command_nick']), row['command'], command)
-			cur.execute("select * from framedata where charname = :charname and instr(command, :command) > 0 ", {"charname": name, "command": command})
+			_command__logger.debug(command)
+			cur.execute("select * from framedata where charname = :charname and instr(command, :command) > 0 order by odr desc ", {"charname": name, "command": command})
 			row = cur.fetchone()
 			if row:
 				return row["command"]
