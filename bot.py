@@ -59,7 +59,7 @@ async def on_ready():
 	logging.info('다음으로 로그인합니다: ')
 	logging.debug(bot.user.name)
 	logging.info('connection was succesful')
-	await bot.change_presence(status=discord.Status.online, activity=discord.Game("'/명령어'로 기능확인"))
+	await bot.change_presence(status=discord.Status.online, activity=discord.Game("봇 채널에서 '/명령어', '명령어'로 기능확인"))
 
 
 @bot.event
@@ -227,7 +227,7 @@ async def search(ctx, charname, command):
 
 async def _search(ctx, charname, string):
 	_search__logger = logging.getLogger("_search")
-	_search__logger.setLevel(logging.WARN)
+	_search__logger.setLevel(logging.WARNING)
 	_search__logger.info("캐릭 이름을 확인합니다.")
 	charname = db.name_ko(charname)
 	name_ko = charname
