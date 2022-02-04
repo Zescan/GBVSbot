@@ -197,10 +197,7 @@ def move(name, move_nick, charname):
 		move = move_nick
 		for row in cur.fetchall():
 			move_logger.info("move pattern exists")
-			#move_logger.debug(row['move_nick'])
-			#move = re.sub(re.compile(row['move_nick']), row['move'], move)
-			#move_logger.debug(move)
-			move = re.sub(re.compile("\W+"), ".*", move)
+			move = re.sub(re.compile("[^\w]+"), ".*", move)
 			move_logger.debug(move)
 			cur.execute("select * from framedata where :charname in (charname) and move_name_ko REGEXP :move_name_ko ", {"charname": charname, "move_name_ko": move})
 			framedata = cur.fetchall()
