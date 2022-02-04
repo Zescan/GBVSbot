@@ -1,15 +1,18 @@
 import logging
 import re
 import sqlite3
-import warnings
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARN)
 
+def regexp(expr, item):
+	reg = re.compile(expr)
+	return reg.search(item) is not None 
+
 con = sqlite3.connect("./db.db")
 con.row_factory = sqlite3.Row
 con.set_trace_callback(logger.debug)
-
+con.create_function("REGEXP", 2, regexp)
 
 def framedata(query_str=''):
 		with con:
@@ -61,6 +64,10 @@ def fromCommand(charname, command):
 
 
 def fromSkill(charname, move_name_ko):
+	fromSkill_logger = logging.getLogger("fromSkill")
+	fromSkill_logger.setLevel(logging.WARNING)
+	fromSkill_logger.info("커맨드에서 프레임데이터 검색")
+	con.set_trace_callback(fromSkill_logger.debug)
 	with con:
 		cur = con.cursor()
 		cur.execute((
@@ -176,30 +183,38 @@ def icon(name):
 		return row['icon']
 
 
-def move(name, move_nick):
+def move(name, move_nick, charname):
 	logging.info("기술 별명에서 기술을 검색합니다.")
-	move_logger = logging.getLogger(__name__)
+	move_logger = logging.getLogger("move")
 	move_logger.setLevel(logging.WARNING)
+	con.set_trace_callback(move_logger.debug)
 	move_logger.debug(name)
 	move_logger.debug(move_nick)
+	move_logger.debug(charname)
 	with con:
 		cur = con.cursor()
 		cur.execute("select * from move_nick where name = :name and disabled is null order by priority, length(move) desc, length(move_nick) desc, move desc, move_nick desc", {"name": name})
 		move = move_nick
 		for row in cur.fetchall():
 			move_logger.info("move pattern exists")
-			move_logger.debug(row['move_nick'])
-#			move = move.replace(row['move_nick'], row['move'])
-			move = re.sub(re.compile(row['move_nick']), row['move'], move)
+			#move_logger.debug(row['move_nick'])
+			#move = re.sub(re.compile(row['move_nick']), row['move'], move)
+			#move_logger.debug(move)
+			move = re.sub(re.compile("\W+"), ".*", move)
 			move_logger.debug(move)
-			cur.execute("select * from framedata where :charname in (charname) and instr(move_name_ko, :move_name_ko) > 0 ", {"charname": name, "move_name_ko": move})
-			row = cur.fetchone()
-			if not row:
+			cur.execute("select * from framedata where :charname in (charname) and move_name_ko REGEXP :move_name_ko ", {"charname": charname, "move_name_ko": move})
+			framedata = cur.fetchall()
+			if not framedata:
+				move_logger.info("no data")
+				move_logger.debug(row['move_nick'])
+				move = re.sub(re.compile(row['move_nick']), row['move'], move)
+				move_logger.debug(move)
 				continue
-			if len(row) == 1:
-				move_logger.info("move exists")
-				return row["move_name_ko"]
+			elif len(framedata) == 1:
+				move_logger.info("single data")
+				return framedata[0]["move_name_ko"]
 			else:
+				move_logger.info("multiple datas")
 				return move
 		return move
 
