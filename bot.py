@@ -92,7 +92,7 @@ async def on_message(message):
 	if not first:
 		logging.info("종료")
 	elif first == "명령어":
-			await _list(ctx)
+			await __list(ctx)
 	elif first == "설명서":
 			await _tip(ctx)
 	elif first == "핑":
@@ -130,12 +130,12 @@ async def pass_normal(ctx):
 
 
 @slash.slash(name="명령어", description='명령어 목록을 보여줍니다.', guild_ids=guild_ids)
-async def list(ctx):
-	await validate(ctx)
-	await _list(ctx)
-
-
 async def _list(ctx):
+	await validate(ctx)
+	await __list(ctx)
+
+
+async def __list(ctx):
 		embed = discord.Embed(title='명령어 목록', description='-괄호 안의 인자도 같이 써주세요!', color=0xfd4949)
 	# embed.add_field(name='/설명서', value='파스티바_봇 사용설명서를 보여줍니다.', inline=False)
 	# embed.add_field(name='/핑', value='현재 핑 상태를 측정합니다.', inline=False)
@@ -238,7 +238,7 @@ async def _search(ctx, charname, string):
 	logging.debug(string)
 	skname = string.strip()
 	logger.debug(skname)
-	skname = db.move(name_ko, skname)
+	skname = db.move(name_ko, skname, charname)
 	logger.debug(skname)
 	logging.info("커맨드 확인")
 	command = string.strip()
