@@ -2,7 +2,7 @@ import logging
 import re
 import sqlite3
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("db")
 logger.setLevel(logging.WARN)
 
 def regexp(expr, item):
@@ -32,8 +32,11 @@ def framedata(query_str=''):
 
 def fromCommand(charname, command):
 	fromCommand_logger = logging.getLogger("fromCommand")
-	fromCommand_logger.setLevel(logging.WARN)
+	fromCommand_logger.setLevel(logging.WARNING)
+	con.set_trace_callback(fromCommand_logger.debug)
 	fromCommand_logger.info("커맨드에서 프레임데이터 검색")
+	fromCommand_logger.debug(charname)
+	fromCommand_logger.debug(command)
 	with con:
 		cur = con.cursor()
 		cur.execute((
@@ -68,6 +71,7 @@ def fromSkill(charname, move_name_ko):
 	fromSkill_logger.setLevel(logging.WARNING)
 	fromSkill_logger.info("커맨드에서 프레임데이터 검색")
 	con.set_trace_callback(fromSkill_logger.debug)
+	fromSkill_logger.debug(move_name_ko)
 	with con:
 		cur = con.cursor()
 		cur.execute((
@@ -151,6 +155,7 @@ def ko_name(nickname):
 def command(pattern):
 	command_logger = logging.getLogger("command")
 	command_logger.setLevel(logging.WARNING)
+	con.set_trace_callback(command_logger.debug)
 	with con:
 		replace = pattern
 		cur = con.cursor()
@@ -184,22 +189,30 @@ def icon(name):
 
 
 def move(name, move_nick, charname):
-	logging.info("기술 별명에서 기술을 검색합니다.")
 	move_logger = logging.getLogger("move")
 	move_logger.setLevel(logging.WARNING)
 	con.set_trace_callback(move_logger.debug)
+	move_logger.info("기술 별명에서 기술을 검색합니다.")
 	move_logger.debug(name)
 	move_logger.debug(move_nick)
 	move_logger.debug(charname)
+	if not move_nick:
+		return None
 	with con:
 		cur = con.cursor()
 		cur.execute("select * from move_nick where name = :name and disabled is null order by priority, length(move) desc, length(move_nick) desc, move desc, move_nick desc", {"name": name})
 		move = move_nick
 		for row in cur.fetchall():
 			move_logger.info("move pattern exists")
-			move = re.sub(re.compile("[^\w]+"), ".*", move)
-			move_logger.debug(move)
-			cur.execute("select * from framedata where :charname in (charname) and move_name_ko REGEXP :move_name_ko ", {"charname": charname, "move_name_ko": move})
+			move_name_ko = re.sub(re.compile("[^\w]+"), r"\W*".replace("\\", r"\\"), move)
+			move_logger.debug(move_name_ko)
+			cur.execute("select * from framedata where :charname in (charname) and move_name_ko REGEXP :move_name_ko order by odr ", {"charname": charname, "move_name_ko": move_name_ko})
+			framedata = cur.fetchone()
+			if framedata:
+				return framedata["move_name_ko"]
+			move_name_ko = re.sub(re.compile("[^\w]+"), r".*".replace("\\", r"\\"), move)
+			move_logger.debug(move_name_ko)
+			cur.execute("select * from framedata where :charname in (charname) and move_name_ko REGEXP :move_name_ko ", {"charname": charname, "move_name_ko": move_name_ko})
 			framedata = cur.fetchall()
 			if not framedata:
 				move_logger.info("no data")
@@ -219,6 +232,7 @@ def move(name, move_nick, charname):
 def _command(name, command_nick):
 	_command__logger = logging.getLogger("_command")
 	_command__logger.setLevel(logging.WARNING)
+	con.set_trace_callback(_command__logger.debug)
 	_command__logger.info("커맨드 별명에서 커맨드를 검색합니다.")
 	_command__logger.debug(name)
 	_command__logger.debug(command_nick)
@@ -231,14 +245,15 @@ def _command(name, command_nick):
 		for row in cur.fetchall():
 			command = re.sub(re.compile(row['command_nick']), row['command'], command)
 			_command__logger.debug(command)
-			cur.execute("select * from framedata where charname = :charname and instr(command, :command) > 0 order by odr desc ", {"charname": name, "command": command})
+			cur.execute("select * from framedata where charname = :charname and instr(command, :command) > 0 order by odr, rowid ", {"charname": name, "command": command})
 			row = cur.fetchone()
 			if row:
+				_command__logger.debug(row["command"])
 				return row["command"]
 		return command
 
 
-def list():
+def _list():
 	with con:
 		cur = con.cursor()
 		cur.execute("select * from list order by odr, name desc")
@@ -247,7 +262,6 @@ def list():
 
 def pattern():
 	with con:
-		replace = pattern
 		cur = con.cursor()
 		cur.execute("select * from command order by length(pattern) desc, length(replace) DESC, pattern desc, replace desc")
 		return cur.fetchall()
