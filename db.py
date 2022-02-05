@@ -163,6 +163,7 @@ def command(pattern):
 		for row in cur.fetchall():
 			replace = re.sub(re.compile(row['pattern']), row['replace'], replace)
 		command_logger.debug(replace)
+		replace = replace.strip()
 		return replace
 
 
