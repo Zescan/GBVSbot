@@ -21,9 +21,9 @@ import numpy as np
 
 load_dotenv()
 
-logging.basicConfig(level=logging.WARN)
+logging.basicConfig(level=logging.WARN, format="%(funcName)s:%(message)s %(filename)s:%(lineno)d")
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("bot")
 logger.setLevel(logging.WARN)
 
 cmdbot = commands.Bot(command_prefix="/")
@@ -147,7 +147,7 @@ async def __list(ctx):
 	# embed.add_field(name='/검색 (캐릭명) (기술 커맨드)', value='해당 캐릭터의 기술의 프레임데이터를 보여줍니다.', inline=False)
 	# embed.add_field(name='/기술 (캐릭명) (기술 커맨드)', value='해당 캐릭터의 기술의 프레임데이터를 보여줍니다.', inline=False)
 	# embed.add_field(name='/깃허브', value='파스티바_봇의 깃허브 링크를 보여줍니다.', inline=False)
-		for row in db.list():
+		for row in db._list():
 			embed.add_field(name='/{name}'.format(name=row['name']), value=row['value'], inline=False)
 		await ctx.send(embed=embed)
 
