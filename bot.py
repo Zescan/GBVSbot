@@ -21,7 +21,7 @@ import numpy as np
 
 load_dotenv()
 
-logging.basicConfig(level=logging.WARN, format="%(funcName)s:%(message)s %(filename)s:%(lineno)d")
+logging.basicConfig(level=logging.WARN, format="[%(funcName)s] %(message)s %(filename)s:%(lineno)d")
 
 logger = logging.getLogger("bot")
 logger.setLevel(logging.WARN)
@@ -252,7 +252,7 @@ async def _search(ctx, charname, string):
 	skills = db.fromSkill(charname, skname)
 	if len(commands) == 1:
 		rows = commands
-	if len(skills) == 1:
+	elif len(skills) == 1:
 		rows = skills
 	if not rows:
 			await _skill(ctx, charname, command, skname)
