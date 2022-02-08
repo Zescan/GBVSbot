@@ -32,7 +32,7 @@ def framedata(query_str=''):
 
 def fromCommand(charname, command):
 	fromCommand_logger = logging.getLogger("fromCommand")
-	fromCommand_logger.setLevel(logging.WARNING)
+	fromCommand_logger.setLevel(logging.DEBUG)
 	con.set_trace_callback(fromCommand_logger.debug)
 	fromCommand_logger.info("커맨드에서 프레임데이터 검색")
 	fromCommand_logger.debug(charname)
@@ -161,6 +161,7 @@ def command(pattern):
 		cur = con.cursor()
 		cur.execute("select * from command where disabled is null order by priority, length(replace) DESC, length(pattern) desc, pattern desc, replace desc")
 		for row in cur.fetchall():
+			command_logger.debug(row['pattern'])
 			replace = re.sub(re.compile(row['pattern']), row['replace'], replace)
 		command_logger.debug(replace)
 		replace = replace.strip()
@@ -188,10 +189,9 @@ def icon(name):
 		row = cur.fetchone()
 		return row['icon']
 
-
 def move(name, move_nick, charname):
 	move_logger = logging.getLogger("move")
-	move_logger.setLevel(logging.WARNING)
+	move_logger.setLevel(logging.DEBUG)
 	con.set_trace_callback(move_logger.debug)
 	move_logger.info("기술 별명에서 기술을 검색합니다.")
 	move_logger.debug(name)
@@ -201,16 +201,14 @@ def move(name, move_nick, charname):
 		return None
 	with con:
 		cur = con.cursor()
-		cur.execute("select * from move_nick where name = :name and disabled is null order by priority, length(move) desc, length(move_nick) desc, move desc, move_nick desc", {"name": name})
 		move = move_nick
+		move_name_ko = _move_name_ko(charname, move)
+		if move_name_ko:
+			return move_name_ko
+		cur.execute("select * from move_nick where name = :name and disabled is null order by priority, length(move) desc, length(move_nick) desc, move desc, move_nick desc", {"name": name})
+		#move = move_nick
 		for row in cur.fetchall():
 			move_logger.info("move pattern exists")
-			move_name_ko = re.sub(re.compile("[^\w]+"), r"\W*".replace("\\", r"\\"), move)
-			move_logger.debug(move_name_ko)
-			cur.execute("select * from framedata where :charname in (charname) and move_name_ko REGEXP :move_name_ko order by odr ", {"charname": charname, "move_name_ko": move_name_ko})
-			framedata = cur.fetchone()
-			if framedata:
-				return framedata["move_name_ko"]
 			move_name_ko = re.sub(re.compile("[^\w]+"), r".*".replace("\\", r"\\"), move)
 			move_logger.debug(move_name_ko)
 			cur.execute("select * from framedata where :charname in (charname) and move_name_ko REGEXP :move_name_ko ", {"charname": charname, "move_name_ko": move_name_ko})
@@ -220,6 +218,9 @@ def move(name, move_nick, charname):
 				move_logger.debug(row['move_nick'])
 				move = re.sub(re.compile(row['move_nick']), row['move'], move)
 				move_logger.debug(move)
+				move_name_ko = _move_name_ko(charname, move)
+				if move_name_ko:
+					return move_name_ko
 				continue
 			elif len(framedata) == 1:
 				move_logger.info("single data")
@@ -227,12 +228,25 @@ def move(name, move_nick, charname):
 			else:
 				move_logger.info("multiple datas")
 				return move
+		move_logger.debug(move)	
 		return move
 
+def _move_name_ko(charname, move):
+	move_name_ko__logger = logging.getLogger("move_name_ko")
+	move_name_ko__logger.setLevel(logging.WARNING)
+	move_name_ko = re.sub(re.compile("[^\w]+"), r"\W*".replace("\\", r"\\"), move)
+	move_name_ko__logger.debug(move_name_ko)
+	with con:
+		cur = con.cursor()
+		cur.execute("select * from framedata where :charname in (charname) and move_name_ko REGEXP :move_name_ko order by odr ", {"charname": charname, "move_name_ko": move_name_ko})
+		framedata = cur.fetchone()
+		if framedata:
+			return framedata["move_name_ko"]
+	return None
 
 def _command(name, command_nick):
 	_command__logger = logging.getLogger("_command")
-	_command__logger.setLevel(logging.WARNING)
+	_command__logger.setLevel(logging.DEBUG)
 	con.set_trace_callback(_command__logger.debug)
 	_command__logger.info("커맨드 별명에서 커맨드를 검색합니다.")
 	_command__logger.debug(name)
