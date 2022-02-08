@@ -250,10 +250,13 @@ async def _search(ctx, charname, string):
 	rows = None
 	commands = db.fromCommand(charname, command)
 	skills = db.fromSkill(charname, skname)
-	if len(commands) == 1:
-		rows = commands
+	if rows:
+		_search__logger.error("invalid data")
+		raise
 	elif len(skills) == 1:
 		rows = skills
+	elif len(commands) == 1:
+		rows = commands
 	if not rows:
 			await _skill(ctx, charname, command, skname)
 			embed = discord.Embed(title="[캐릭 이름] [커맨드/기술명]", description="특정 기술에 대해서는 위와 같이 입력해주세요.", color=0xedf11e)
