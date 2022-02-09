@@ -206,7 +206,6 @@ def move(name, move_nick, charname):
 		if move_name_ko:
 			return move_name_ko
 		cur.execute("select * from move_nick where name = :name and disabled is null order by priority, length(move) desc, length(move_nick) desc, move desc, move_nick desc", {"name": name})
-		#move = move_nick
 		for row in cur.fetchall():
 			move_logger.info("move pattern exists")
 			move_name_ko = re.sub(re.compile("[^\w]+"), r".*".replace("\\", r"\\"), move)
