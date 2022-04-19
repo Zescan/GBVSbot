@@ -380,6 +380,7 @@ async def validate(ctx):
 		return True
 	return False
 
-
+if len(os.environ['token']) <= 0:
+	raise 
 bot.run(os.environ['token'])
 
