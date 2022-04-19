@@ -382,5 +382,5 @@ async def validate(ctx):
 
 if len(os.environ['token']) <= 0:
 	raise 
-bot.run(os.environ['token'])
+bot.run(os.environ['token'], bot=True)
 
