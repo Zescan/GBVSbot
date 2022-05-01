@@ -15,19 +15,25 @@ con.set_trace_callback(logger.debug)
 con.create_function("REGEXP", 2, regexp)
 
 def framedata(query_str=''):
-		with con:
-				cur = con.cursor()
-				if bool(query_str):
-						query_str = ' ' + query_str
-				execute_str = "select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from (SELECT * FROM framedata {query_str} ) _framedata left join guard on (_framedata.guard = guard.en) ".format(query_str=query_str)
-				execute_str += " left join name on (_framedata.charname = name.en) order by odr "
-				cur.execute(execute_str)
-				row = cur.fetchone()
-				if row:
-					logging.debug(row.keys())
-				cur.execute(execute_str)
-				rows = cur.fetchall()
-				return rows
+	framedata_logger = logging.getLogger("framedata")
+	framedata_logger.setLevel(logging.DEBUG)
+	con.set_trace_callback(framedata_logger.debug)
+	framedata_logger.debug(query_str)
+	with con:
+			cur = con.cursor()
+			if bool(query_str):
+					query_str = ' ' + query_str
+			execute_str = "select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from (SELECT * FROM framedata {query_str} ) _framedata left join guard on (_framedata.guard = guard.en) ".format(query_str=query_str)
+			execute_str += " left join name on (_framedata.charname = name.en) order by odr "
+			framedata_logger.debug(execute_str)
+			cur.execute(execute_str)
+			row = cur.fetchone()
+			if row:
+				logging.debug(row.keys())
+			cur.execute(execute_str)
+			rows = cur.fetchall()
+			framedata_logger.info("프레임데이터 검색")
+			return rows
 
 
 def fromCommand(charname, command):
@@ -344,6 +350,6 @@ def capitalize(en):
 	else:
 		merged = ""
 		for each in arr:
-			merged += "_" + each.capitalize()
-		merged = merged.replace("_", "", 1)
+			merged += "-" + each.capitalize()
+		merged = merged.replace("-", "", 1)
 		return merged 
