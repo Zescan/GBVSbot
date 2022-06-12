@@ -349,6 +349,8 @@ def active(pattern):
 def recovery(pattern):
 	return replace(pattern, "recovery")
 
+def startup(pattern):
+	return replace(pattern, "startup")
 
 def capitalize(en):
 	if not en:
