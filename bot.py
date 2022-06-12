@@ -216,7 +216,7 @@ async def _search(ctx, charname, string):
 	else:
 			for row in rows:
 				info_dic = {'데미지': db.damage(row['damage']) or "-",
-					'가드판정': row['guard_ko'] or row['guard'],
+					'가드판정': row['guard_ko'] or db.guard(row['guard']),
 					'시동 프레임': row['startup'],
 					'지속 프레임': db.active(row['active']),
 					'회수 프레임': db.recovery(row['recovery']),
@@ -235,32 +235,36 @@ async def skill(ctx, character, command):
 
 
 async def _skill(ctx, charname, command, skname):
-		charname = db.name_ko(charname)
-		charname = db.en(charname)
-		logging.debug(charname)
-		query_ = " where 1=1 "
-		query_ += " and case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
-		if command or skname:
-			query_ += " and case when 0=1 "
-			for part in re.findall(re.compile("[^0-9]+"), command):
-				query_ += " or instr(trim(replace(command, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
-			for part in re.findall(re.compile("[0-9]+"), command):
-				query_ += " or instr(trim(replace(command, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
-			for part in re.findall(re.compile("[약중강특]+"), skname):
-				query_ += " or instr(trim(replace(move_name_ko, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
-			for part in re.findall(re.compile("[^약중강특]+"), skname):
-				query_ += " or instr(trim(replace(move_name_ko, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
-			query_ += " then 1 end is not null "
-		rows = db.framedata(query_)
-		if not rows:
-				embed = discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
-				await ctx.send(embed=embed)
-		else:
-				info_ = {'커맨드': [], '기술명': []}
-				for row in rows:
-						info_['커맨드'].append(row['command'])
-						info_['기술명'].append(row['move_name_ko'] or row['skname'] or row['command'])
-				await blow.c_embed(ctx, row['name_ko'], " 기술 목록 ", info_)
+	_skill_logger = logging.getLogger("_skill")
+	_skill_logger.setLevel(logging.DEBUG)
+	_skill_logger.debug(charname)
+	charname = db.name_ko(charname)
+	_skill_logger.debug(charname)
+	charname = db.en(charname)
+	_skill_logger.debug(charname)
+	query_ = " where 1=1 "
+	query_ += " and case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
+	if command or skname:
+		query_ += " and case when 0=1 "
+		for part in re.findall(re.compile("[^0-9]+"), command):
+			query_ += " or instr(trim(replace(command, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
+		for part in re.findall(re.compile("[0-9]+"), command):
+			query_ += " or instr(trim(replace(command, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
+		for part in re.findall(re.compile("[약중강특]+"), skname):
+			query_ += " or instr(trim(replace(move_name_ko, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
+		for part in re.findall(re.compile("[^약중강특]+"), skname):
+			query_ += " or instr(trim(replace(move_name_ko, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
+		query_ += " then 1 end is not null "
+	rows = db.framedata(query_)
+	if not rows:
+			embed = discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
+			await ctx.send(embed=embed)
+	else:
+			info_ = {'커맨드': [], '기술명': []}
+			for row in rows:
+					info_['커맨드'].append(row['command'])
+					info_['기술명'].append(row['move_name_ko'] or row['skname'] or row['command'])
+			await blow.c_embed(ctx, row['name_ko'], " 기술 목록 ", info_)
 
 
 @slash.slash(name="공략", description='해당 캐릭터의 공략글을 보여줍니다.', guild_ids=guild_ids)
