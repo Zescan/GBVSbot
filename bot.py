@@ -217,7 +217,7 @@ async def _search(ctx, charname, string):
 			for row in rows:
 				info_dic = {'데미지': db.damage(row['damage']) or "-",
 					'가드판정': row['guard_ko'] or db.guard(row['guard']),
-					'시동 프레임': row['startup'],
+					'시동 프레임': db.startup(row['startup']),
 					'지속 프레임': db.active(row['active']),
 					'회수 프레임': db.recovery(row['recovery']),
 					'가드시 이득': db.on(row['onblock']),
