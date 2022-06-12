@@ -313,6 +313,17 @@ def on(pattern):
 		return replace
 	return pattern
 
+def guard(en):
+	if not en:
+		return en
+	with con:
+		replace = en
+		cur = con.cursor()
+		cur.execute("select * from guard order by length(en) desc, length(ko) DESC")
+		for row in cur.fetchall():
+			replace = replace.replace(row['en'], row['ko'])
+		return replace
+	return pattern
 
 def replace(pattern, table):
 	if not pattern:
