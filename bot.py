@@ -180,28 +180,33 @@ async def search(ctx, charname, command):
 async def _search(ctx, charname, string):
 	_search__logger = logging.getLogger("_search")
 	_search__logger.setLevel(logging.WARNING)
-	_search__logger.info("캐릭 이름을 확인합니다.")
 	charname = db.name_ko(charname)
 	name_ko = charname
 	charname = db.en(charname)
 	if not re.search(re.compile("[a-zA-z]+"), charname):
 		return None
 	logging.debug(charname)
-	logging.debug(string)
-	skname = string.strip()
-	logger.debug(skname)
-	skname = db.move(name_ko, skname, charname)
-	logger.debug(skname)
-	logging.info("커맨드 확인")
+	_search__logger.info("캐릭의 한글 이름을 영어 이름으로 변환")
+	
+	
 	command = string.strip()
 	logging.debug(command)
 	command = db.command(command)
 	logging.debug(command)
 	command = db._command(charname, command)
 	logging.debug(command)
+	logging.info("커맨드 확인")
 	rows = None
 	commands = db.fromCommand(charname, command)
+	logging.info("커맨드에 의한 검색")
+	logging.debug(string)
+	skname = string.strip()
+	logger.debug(skname)
+	skname = db.move(name_ko, skname, charname)
+	logger.debug(skname)
+	logging.info("기술명 확인")
 	skills = db.fromSkill(charname, skname)
+	logging.info("기술명에 의한 검색")
 	if rows:
 		_search__logger.error("invalid data")
 		raise
@@ -236,7 +241,7 @@ async def skill(ctx, character, command):
 
 async def _skill(ctx, charname, command, skname):
 	_skill_logger = logging.getLogger("_skill")
-	_skill_logger.setLevel(logging.DEBUG)
+	_skill_logger.setLevel(logging.WARNING)
 	_skill_logger.debug(charname)
 	charname = db.name_ko(charname)
 	_skill_logger.debug(charname)
@@ -245,16 +250,18 @@ async def _skill(ctx, charname, command, skname):
 	query_ = " where 1=1 "
 	query_ += " and case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
 	if command or skname:
-		query_ += " and case when 0=1 "
-		for part in re.findall(re.compile("[^0-9]+"), command):
-			query_ += " or instr(trim(replace(command, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
-		for part in re.findall(re.compile("[0-9]+"), command):
-			query_ += " or instr(trim(replace(command, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
-		for part in re.findall(re.compile("[약중강특]+"), skname):
-			query_ += " or instr(trim(replace(move_name_ko, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
-		for part in re.findall(re.compile("[^약중강특]+"), skname):
-			query_ += " or instr(trim(replace(move_name_ko, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
-		query_ += " then 1 end is not null "
+		query_ += " and case when ( "
+# 		for part in re.findall(re.compile("[^0-9]+"), command):
+# 			query_ += " or instr(trim(replace(command, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
+# 		for part in re.findall(re.compile("[0-9]+"), command):
+# 			query_ += " or instr(trim(replace(command, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
+# 		for part in re.findall(re.compile("[약중강특]+"), skname):
+# 			query_ += " or instr(trim(replace(move_name_ko, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
+# 		for part in re.findall(re.compile("[^약중강특]+"), skname):
+# 			query_ += " or instr(trim(replace(move_name_ko, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
+		query_ += " command REGEXP replace('{command}', ' ', '.*') ".format(command=command)
+		query_ += " or '{command}' REGEXP replace(command, ' ', '.*') ".format(command=command)
+		query_ += " ) then 1 end is not null "
 	rows = db.framedata(query_)
 	if not rows:
 			embed = discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
