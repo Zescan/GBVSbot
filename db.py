@@ -16,7 +16,7 @@ con.create_function("REGEXP", 2, regexp)
 
 def framedata(query_str=''):
 	framedata_logger = logging.getLogger("framedata")
-	framedata_logger.setLevel(logging.DEBUG)
+	framedata_logger.setLevel(logging.WARNING)
 	con.set_trace_callback(framedata_logger.debug)
 	framedata_logger.debug(query_str)
 	with con:
@@ -78,34 +78,40 @@ def fromCommand(charname, command):
 
 def fromSkill(charname, move_name_ko):
 	fromSkill_logger = logging.getLogger("fromSkill")
-	fromSkill_logger.setLevel(logging.WARNING)
+	fromSkill_logger.setLevel(logging.DEBUG)
 	fromSkill_logger.info("커맨드에서 프레임데이터 검색")
 	con.set_trace_callback(fromSkill_logger.debug)
 	fromSkill_logger.debug(move_name_ko)
+
 	with con:
 		cur = con.cursor()
 		cur.execute((
 			" select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from ( "
-			" SELECT * FROM framedata "
+			" SELECT * "
+				" , min(length(:move_name_ko) * 1.0 / length(move_name_ko), length(move_name_ko) * 1.0 / length(:move_name_ko)) as rate "
+			" FROM framedata "
 			" WHERE case when :charname in (trim(charname)) then 1 end is not null "
-			" and trim(replace(move_name_ko, ' ', '')) = replace(:move_name_ko, ' ', '') "
+			" and ( "
+				" move_name_ko REGEXP replace(:move_name_ko, ' ', '.*') "
+				" or :move_name_ko REGEXP replace(move_name_ko, ' ', '.*') "
+			" ) "
 			" ) _framedata left join guard on (_framedata.guard = guard.en) "
 			" left join name on (_framedata.charname = name.en) "
-			" order by odr "
+			" order by rate desc, odr "
 			), {"charname": charname, "move_name_ko": move_name_ko})
 		rows = cur.fetchall()
 		if len(rows) == 1:
 			return rows
-		cur.execute((
-			" select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from ( "
-			" SELECT * FROM framedata "
-			" WHERE case when :charname in (trim(charname)) then 1 end is not null "
-			" and instr(trim(replace(move_name_ko, ' ', '')), replace(:move_name_ko, ' ', '')) > 0 "
-			" ) _framedata left join guard on (_framedata.guard = guard.en) "
-			" left join name on (_framedata.charname = name.en) "
-			" order by odr "
-			), {"charname": charname, "move_name_ko": move_name_ko})
-		rows = cur.fetchall()
+# 		cur.execute((
+# 			" select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from ( "
+# 			" SELECT * FROM framedata "
+# 			" WHERE case when :charname in (trim(charname)) then 1 end is not null "
+# 			" and instr(trim(replace(move_name_ko, ' ', '')), replace(:move_name_ko, ' ', '')) > 0 "
+# 			" ) _framedata left join guard on (_framedata.guard = guard.en) "
+# 			" left join name on (_framedata.charname = name.en) "
+# 			" order by odr "
+# 			), {"charname": charname, "move_name_ko": move_name_ko})
+# 		rows = cur.fetchall()
 		return rows
 
 
@@ -201,7 +207,7 @@ def icon(name):
 
 def move(name, move_nick, charname):
 	move_logger = logging.getLogger("move")
-	move_logger.setLevel(logging.WARNING)
+	move_logger.setLevel(logging.DEBUG)
 	con.set_trace_callback(move_logger.debug)
 	move_logger.info("기술 별명에서 기술을 검색합니다.")
 	move_logger.debug(name)
@@ -220,7 +226,11 @@ def move(name, move_nick, charname):
 			move_logger.info("move pattern exists")
 			move_name_ko = re.sub(re.compile("[^\w]+"), r".*".replace("\\", r"\\"), move)
 			move_logger.debug(move_name_ko)
-			cur.execute("select * from framedata where :charname in (charname) and move_name_ko REGEXP :move_name_ko ", {"charname": charname, "move_name_ko": move_name_ko})
+			cur.execute("select * from framedata where :charname in (charname) and ( "
+						" move_name_ko REGEXP replace(:move_name_ko, ' ', '.*') "
+						" or :move_name_ko REGEXP replace(move_name_ko, ' ', '.*') "
+# 						" move_name_ko REGEXP :move_name_ko "
+					" ) ", {"charname": charname, "move_name_ko": move_name_ko})
 			framedata = cur.fetchall()
 			if not framedata:
 				move_logger.info("no data")
@@ -241,16 +251,26 @@ def move(name, move_nick, charname):
 		return move
 
 def _move_name_ko(charname, move):
-	move_name_ko__logger = logging.getLogger("move_name_ko")
-	move_name_ko__logger.setLevel(logging.WARNING)
+	move_name_ko__logger = logging.getLogger("_move_name_ko")
+	move_name_ko__logger.setLevel(logging.DEBUG)
 	move_name_ko = re.sub(re.compile("[^\w]+"), r"\W*".replace("\\", r"\\"), move)
 	move_name_ko__logger.debug(move_name_ko)
 	with con:
 		cur = con.cursor()
-		cur.execute("select * from framedata where :charname in (charname) and move_name_ko REGEXP :move_name_ko order by odr ", {"charname": charname, "move_name_ko": move_name_ko})
-		framedata = cur.fetchone()
-		if framedata:
+		cur.execute("select * "
+				" , min(length(:move_name_ko) * 1.0 / length(move_name_ko), length(move_name_ko) * 1.0 / length(:move_name_ko)) as rate "
+				" from framedata where :charname in (charname) and ( "
+					" move_name_ko REGEXP replace(:move_name_ko, ' ', '.*') "
+					" or :move_name_ko REGEXP replace(move_name_ko, ' ', '.*') "
+				" ) "
+				" order by rate desc, odr "
+				, {"charname": charname, "move_name_ko": move_name_ko})
+		framedatas = cur.fetchall()
+		if len(framedatas) == 1:
+			framedata = framedatas[0]
 			return framedata["move_name_ko"]
+		else:
+			return move
 	return None
 
 def _command(name, command_nick):
@@ -270,8 +290,8 @@ def _command(name, command_nick):
 			command = re.sub(re.compile(row['command_nick']), row['command'], command)
 			_command__logger.debug(command)
 			cur.execute(
-				"select *, "
-				" min(length(:command) * 1.0 / length(command), length(command) * 1.0 / length(:command)) as rate "
+				"select * "
+				" , min(length(:command) * 1.0 / length(command), length(command) * 1.0 / length(:command)) as rate "
 				" from framedata where charname = :charname "
 				" and ( "
 					" command REGEXP replace(:command, ' ', '.*') "
