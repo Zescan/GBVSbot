@@ -38,7 +38,7 @@ def framedata(query_str=''):
 
 def fromCommand(charname, command):
 	fromCommand_logger = logging.getLogger("fromCommand")
-	fromCommand_logger.setLevel(logging.DEBUG)
+	fromCommand_logger.setLevel(logging.WARNING)
 	con.set_trace_callback(fromCommand_logger.debug)
 	fromCommand_logger.info("커맨드에서 프레임데이터 검색")
 	fromCommand_logger.debug(charname)
@@ -49,26 +49,30 @@ def fromCommand(charname, command):
 			" select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from ( "
 			" SELECT * FROM framedata "
 			" WHERE case when :charname in (trim(charname)) then 1 end is not null "
-			" and trim(replace(command, ' ', '')) = replace(:command, ' ', '') "
+			" and ( "
+				" command = :command "
+# 				" command REGEXP replace(:command, ' ', '.*') "
+# 				" or :command REGEXP replace(command, ' ', '.*') "
+			" ) "
 			" ) _framedata left join guard on (_framedata.guard = guard.en) "
 			" left join name on (_framedata.charname = name.en) "
 			" order by odr "
 			), {"charname": charname, "command": command})
 		rows = cur.fetchall()
-		if len(rows) == 1:
-			fromCommand_logger.info("단일 결과 확인")
-			return rows
-		fromCommand_logger.info("유사 결과 검색")
-		cur.execute((
-			" select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from ( "
-			" SELECT * FROM framedata "
-			" WHERE case when :charname in (trim(charname)) then 1 end is not null "
-			" and instr(trim(replace(command, ' ', '')), replace(:command, ' ', '')) > 0 "
-			" ) _framedata left join guard on (_framedata.guard = guard.en) "
-			" left join name on (_framedata.charname = name.en) "
-			" order by odr "
-			), {"charname": charname, "command": command})
-		rows = cur.fetchall()
+# 		if len(rows) == 1:
+# 			fromCommand_logger.info("단일 결과 확인")
+# 			return rows
+# 		fromCommand_logger.info("유사 결과 검색")
+# 		cur.execute((
+# 			" select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from ( "
+# 			" SELECT * FROM framedata "
+# 			" WHERE case when :charname in (trim(charname)) then 1 end is not null "
+# 			" and instr(trim(replace(command, ' ', '')), replace(:command, ' ', '')) > 0 "
+# 			" ) _framedata left join guard on (_framedata.guard = guard.en) "
+# 			" left join name on (_framedata.charname = name.en) "
+# 			" order by odr "
+# 			), {"charname": charname, "command": command})
+# 		rows = cur.fetchall()
 		return rows
 
 
@@ -197,7 +201,7 @@ def icon(name):
 
 def move(name, move_nick, charname):
 	move_logger = logging.getLogger("move")
-	move_logger.setLevel(logging.DEBUG)
+	move_logger.setLevel(logging.WARNING)
 	con.set_trace_callback(move_logger.debug)
 	move_logger.info("기술 별명에서 기술을 검색합니다.")
 	move_logger.debug(name)
@@ -251,7 +255,7 @@ def _move_name_ko(charname, move):
 
 def _command(name, command_nick):
 	_command__logger = logging.getLogger("_command")
-	_command__logger.setLevel(logging.DEBUG)
+	_command__logger.setLevel(logging.WARNING)
 	con.set_trace_callback(_command__logger.debug)
 	_command__logger.info("커맨드 별명에서 커맨드를 검색합니다.")
 	_command__logger.debug(name)
@@ -265,9 +269,19 @@ def _command(name, command_nick):
 		for row in cur.fetchall():
 			command = re.sub(re.compile(row['command_nick']), row['command'], command)
 			_command__logger.debug(command)
-			cur.execute("select * from framedata where charname = :charname and instr(command, :command) > 0 order by odr, rowid ", {"charname": name, "command": command})
-			row = cur.fetchone()
-			if row:
+			cur.execute(
+				"select *, "
+				" min(length(:command) * 1.0 / length(command), length(command) * 1.0 / length(:command)) as rate "
+				" from framedata where charname = :charname "
+				" and ( "
+					" command REGEXP replace(:command, ' ', '.*') "
+					" or :command REGEXP replace(command, ' ', '.*') "
+				" ) "
+				" order by rate desc, odr, rowid",
+					{"charname": name, "command": command})
+			rows = cur.fetchall()
+			if len(rows) == 1:
+				row = rows[0]
 				_command__logger.debug(row["command"])
 				return row["command"]
 		return command
