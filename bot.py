@@ -190,23 +190,23 @@ async def _search(ctx, charname, string):
 	
 	
 	command = string.strip()
-	logging.debug(command)
+	_search__logger.debug(command)
 	command = db.command(command)
-	logging.debug(command)
+	_search__logger.debug(command)
 	command = db._command(charname, command)
-	logging.debug(command)
-	logging.info("커맨드 확인")
+	_search__logger.debug(command)
+	_search__logger.info("커맨드 확인")
 	rows = None
 	commands = db.fromCommand(charname, command)
-	logging.info("커맨드에 의한 검색")
-	logging.debug(string)
+	_search__logger.info("커맨드에 의한 검색")
+	_search__logger.debug(string)
 	skname = string.strip()
-	logger.debug(skname)
+	_search__logger.debug(skname)
 	skname = db.move(name_ko, skname, charname)
-	logger.debug(skname)
-	logging.info("기술명 확인")
+	_search__logger.debug(skname)
+	_search__logger.info("기술명 확인")
 	skills = db.fromSkill(charname, skname)
-	logging.info("기술명에 의한 검색")
+	_search__logger.info("기술명에 의한 검색")
 	if rows:
 		_search__logger.error("invalid data")
 		raise
@@ -247,9 +247,10 @@ async def _skill(ctx, charname, command, skname):
 	_skill_logger.debug(charname)
 	charname = db.en(charname)
 	_skill_logger.debug(charname)
+	move_name_ko = skname
 	query_ = " where 1=1 "
 	query_ += " and case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
-	if command or skname:
+	if command:
 		query_ += " and case when ( "
 # 		for part in re.findall(re.compile("[^0-9]+"), command):
 # 			query_ += " or instr(trim(replace(command, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
@@ -261,7 +262,10 @@ async def _skill(ctx, charname, command, skname):
 # 			query_ += " or instr(trim(replace(move_name_ko, ' ', '')), replace('{part}', ' ', '')) > 0 ".format(part=part)
 		query_ += " command REGEXP replace('{command}', ' ', '.*') ".format(command=command)
 		query_ += " or '{command}' REGEXP replace(command, ' ', '.*') ".format(command=command)
-		query_ += " ) then 1 end is not null "
+	if move_name_ko:
+		query_ += " or move_name_ko REGEXP replace('{move_name_ko}', ' ', '.*') ".format(move_name_ko=move_name_ko)
+		query_ += " or '{move_name_ko}' REGEXP replace(move_name_ko, ' ', '.*') ".format(move_name_ko=move_name_ko)
+	query_ += " ) then 1 end is not null "
 	rows = db.framedata(query_)
 	if not rows:
 			embed = discord.Embed(title="해당하는 정보를 찾을 수 없습니다", description="다시 한 번 확인해 주세요", color=0xedf11e)
