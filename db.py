@@ -96,8 +96,9 @@ def fromSkill(charname, move_name_ko):
 				" FROM framedata "
 				" WHERE case when :charname in (trim(charname)) then 1 end is not null "
 				" and ( "
-					" move_name_ko REGEXP replace(:move_name_ko, ' ', '.*') "
-					" or :move_name_ko REGEXP replace(move_name_ko, ' ', '.*') "
+					" move_name_ko = :move_name_ko "
+# 					" move_name_ko REGEXP replace(:move_name_ko, ' ', '.*') "
+# 					" or :move_name_ko REGEXP replace(move_name_ko, ' ', '.*') "
 				" ) "
 			" ) _framedata left join guard on (_framedata.guard = guard.en) "
 			" left join name on (_framedata.charname = name.en) "
@@ -211,7 +212,7 @@ def icon(name):
 
 def move(name, move_nick, charname):
 	move_logger = logging.getLogger("move")
-	move_logger.setLevel(logging.DEBUG)
+	move_logger.setLevel(logging.WARNING)
 	con.set_trace_callback(move_logger.debug)
 	move_logger.info("기술 별명에서 기술을 검색합니다.")
 	move_logger.debug(name)
@@ -282,7 +283,7 @@ def _move_name_ko(charname, move):
 
 def _command(name, command_nick):
 	_command__logger = logging.getLogger("_command")
-	_command__logger.setLevel(logging.WARNING)
+	_command__logger.setLevel(logging.DEBUG)
 	con.set_trace_callback(_command__logger.debug)
 	_command__logger.info("커맨드 별명에서 커맨드를 검색합니다.")
 	_command__logger.debug(name)
