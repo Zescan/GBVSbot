@@ -251,11 +251,15 @@ async def _skill(ctx, charname, command, skname):
 	query_ = " where 1=1 "
 	query_ += " and case when '{charname}' in (trim(charname)) then 1 end is not null ".format(charname=charname)
 	if command or move_name_ko:
-		query_ += " and case when ( "
-		query_ += " command REGEXP replace('{command}', ' ', '.*') ".format(command=command)
-		query_ += " or '{command}' REGEXP replace(command, ' ', '.*') ".format(command=command)
-		query_ += " or move_name_ko REGEXP replace('{move_name_ko}', ' ', '.*') ".format(move_name_ko=move_name_ko)
-		query_ += " or '{move_name_ko}' REGEXP replace(move_name_ko, ' ', '.*') ".format(move_name_ko=move_name_ko)
+		query_ += " and case when ( 0 = 1 "
+# 		query_ += " command REGEXP replace('{command}', ' ', '.*') ".format(command=command)
+# 		query_ += " or '{command}' REGEXP replace(command, ' ', '.*') ".format(command=command)
+# 		query_ += " or instr(command, '{command}') > 0 ".format(command=command)
+# 		query_ += " or instr('{command}', command) > 0 ".format(command=command)
+		query_ += db.getSearchCondition("command", "'{command}'".format(command=command))
+# 		query_ += " or move_name_ko REGEXP replace('{move_name_ko}', ' ', '.*') ".format(move_name_ko=move_name_ko)
+# 		query_ += " or '{move_name_ko}' REGEXP replace(move_name_ko, ' ', '.*') ".format(move_name_ko=move_name_ko)
+		query_ += db.getSearchCondition("move_name_ko", "'{move_name_ko}'".format(move_name_ko=move_name_ko))
 		query_ += " ) then 1 end is not null "
 	rows = db.framedata(query_)
 	if not rows:
