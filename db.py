@@ -6,6 +6,10 @@ logger = logging.getLogger("db")
 logger.setLevel(logging.WARN)
 
 def regexp(expr, item):
+	if not expr:
+		return False
+	if not item:
+		return False
 	reg = re.compile(expr)
 	return reg.search(item) is not None 
 
@@ -16,7 +20,7 @@ con.create_function("REGEXP", 2, regexp)
 
 def framedata(query_str=''):
 	framedata_logger = logging.getLogger("framedata")
-	framedata_logger.setLevel(logging.WARNING)
+	framedata_logger.setLevel(logging.DEBUG)
 	con.set_trace_callback(framedata_logger.debug)
 	framedata_logger.debug(query_str)
 	with con:
@@ -79,7 +83,7 @@ def fromCommand(charname, command):
 def fromSkill(charname, move_name_ko):
 	fromSkill_logger = logging.getLogger("fromSkill")
 	fromSkill_logger.setLevel(logging.DEBUG)
-	fromSkill_logger.info("커맨드에서 프레임데이터 검색")
+	fromSkill_logger.info("기술명에서 프레임데이터 검색")
 	con.set_trace_callback(fromSkill_logger.debug)
 	fromSkill_logger.debug(move_name_ko)
 
@@ -87,21 +91,21 @@ def fromSkill(charname, move_name_ko):
 		cur = con.cursor()
 		cur.execute((
 			" select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from ( "
-			" SELECT * "
-				" , min(length(:move_name_ko) * 1.0 / length(move_name_ko), length(move_name_ko) * 1.0 / length(:move_name_ko)) as rate "
-			" FROM framedata "
-			" WHERE case when :charname in (trim(charname)) then 1 end is not null "
-			" and ( "
-				" move_name_ko REGEXP replace(:move_name_ko, ' ', '.*') "
-				" or :move_name_ko REGEXP replace(move_name_ko, ' ', '.*') "
-			" ) "
+				" SELECT * "
+					" , min(length(:move_name_ko) * 1.0 / length(move_name_ko), length(move_name_ko) * 1.0 / length(:move_name_ko)) as rate "
+				" FROM framedata "
+				" WHERE case when :charname in (trim(charname)) then 1 end is not null "
+				" and ( "
+					" move_name_ko REGEXP replace(:move_name_ko, ' ', '.*') "
+					" or :move_name_ko REGEXP replace(move_name_ko, ' ', '.*') "
+				" ) "
 			" ) _framedata left join guard on (_framedata.guard = guard.en) "
 			" left join name on (_framedata.charname = name.en) "
 			" order by rate desc, odr "
 			), {"charname": charname, "move_name_ko": move_name_ko})
 		rows = cur.fetchall()
-		if len(rows) == 1:
-			return rows
+# 		if len(rows) == 1:
+# 			return rows
 # 		cur.execute((
 # 			" select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from ( "
 # 			" SELECT * FROM framedata "
@@ -252,7 +256,8 @@ def move(name, move_nick, charname):
 
 def _move_name_ko(charname, move):
 	move_name_ko__logger = logging.getLogger("_move_name_ko")
-	move_name_ko__logger.setLevel(logging.DEBUG)
+	con.set_trace_callback(move_name_ko__logger.debug)
+	move_name_ko__logger.setLevel(logging.WARNING)
 	move_name_ko = re.sub(re.compile("[^\w]+"), r"\W*".replace("\\", r"\\"), move)
 	move_name_ko__logger.debug(move_name_ko)
 	with con:
@@ -268,9 +273,11 @@ def _move_name_ko(charname, move):
 		framedatas = cur.fetchall()
 		if len(framedatas) == 1:
 			framedata = framedatas[0]
+			move_name_ko__logger.debug(framedata["move_name_ko"])
 			return framedata["move_name_ko"]
-		else:
-			return move
+# 		else:
+# 			move_name_ko__logger.info("multiple results")
+# 			return move
 	return None
 
 def _command(name, command_nick):
