@@ -92,7 +92,8 @@ def fromSkill(charname, move_name_ko):
 		cur.execute((
 			" select guard.ko as guard_ko, name.ko as name_ko, _framedata.* from ( "
 				" SELECT * "
-					" , min(length(:move_name_ko) * 1.0 / length(move_name_ko), length(move_name_ko) * 1.0 / length(:move_name_ko)) as rate "
+					"" + getRateEquation("move_name_ko", ":move_name_ko") + ""
+# 					" , min(length(:move_name_ko) * 1.0 / length(move_name_ko), length(move_name_ko) * 1.0 / length(:move_name_ko)) as rate "
 				" FROM framedata "
 				" WHERE case when :charname in (trim(charname)) then 1 end is not null "
 				" and ( "
@@ -232,9 +233,10 @@ def move(name, move_nick, charname):
 			move_name_ko = re.sub(re.compile("[^\w]+"), r".*".replace("\\", r"\\"), move)
 			move_logger.debug(move_name_ko)
 			cur.execute("select * from framedata where :charname in (charname) and ( "
-						" move_name_ko REGEXP replace(:move_name_ko, ' ', '.*') "
-						" or :move_name_ko REGEXP replace(move_name_ko, ' ', '.*') "
-# 						" move_name_ko REGEXP :move_name_ko "
+# 						" move_name_ko REGEXP replace(:move_name_ko, ' ', '.*') "
+# 						" or :move_name_ko REGEXP replace(move_name_ko, ' ', '.*') "
+						" 0 = 1 "
+						"" + getSearchCondition("move_name_ko", ":move_name_ko") + ""
 					" ) ", {"charname": charname, "move_name_ko": move_name_ko})
 			framedata = cur.fetchall()
 			if not framedata:
@@ -264,10 +266,15 @@ def _move_name_ko(charname, move):
 	with con:
 		cur = con.cursor()
 		cur.execute("select * "
-				" , min(length(:move_name_ko) * 1.0 / length(move_name_ko), length(move_name_ko) * 1.0 / length(:move_name_ko)) as rate "
+# 				" , min(length(:move_name_ko) * 1.0 / length(move_name_ko), length(move_name_ko) * 1.0 / length(:move_name_ko)) as rate "
+				"" + getRateEquation("move_name_ko", ":move_name_ko") + ""
 				" from framedata where :charname in (charname) and ( "
-					" move_name_ko REGEXP replace(:move_name_ko, ' ', '.*') "
-					" or :move_name_ko REGEXP replace(move_name_ko, ' ', '.*') "
+
+# 					" move_name_ko = :move_name_ko "
+# 					" or move_name_ko REGEXP replace(:move_name_ko, ' ', '.*') "
+# 					" or :move_name_ko REGEXP replace(move_name_ko, ' ', '.*') "
+					" 0 = 1 "
+					"" + getSearchCondition("move_name_ko", ":move_name_ko") + ""
 				" ) "
 				" order by rate desc, odr "
 				, {"charname": charname, "move_name_ko": move_name_ko})
@@ -299,11 +306,15 @@ def _command(name, command_nick):
 			_command__logger.debug(command)
 			cur.execute(
 				"select * "
-				" , min(length(:command) * 1.0 / length(command), length(command) * 1.0 / length(:command)) as rate "
+# 				" , min(length(:command) * 1.0 / length(command), length(command) * 1.0 / length(:command)) as rate "
+				"" + getRateEquation("command", ":command") + ""
 				" from framedata where charname = :charname "
 				" and ( "
-					" command REGEXP replace(:command, ' ', '.*') "
-					" or :command REGEXP replace(command, ' ', '.*') "
+# 					" command = :command "
+# 					" or command REGEXP replace(:command, ' ', '.*') "
+# 					" or :command REGEXP replace(command, ' ', '.*') "
+					" 0 = 1 "
+					"" + getSearchCondition("command", ":command") + ""
 				" ) "
 				" order by rate desc, odr, rowid",
 					{"charname": name, "command": command})
@@ -408,3 +419,31 @@ def capitalize(en):
 			merged += "-" + each.capitalize()
 		merged = merged.replace("-", "", 1)
 		return merged 
+
+def getQuoted(param):
+	return " '{param}' ".format(param=param)
+
+
+def getColoned(param):
+	return " :{param} ".format(param=param)
+
+
+def getDivEquation(first, second):
+	return " (length({first}) * 1.0 / length({second})) ".format(first=first, second=second)
+
+
+def getAbsEquation(param):
+	return " (abs({param} - 1.0)) ".format(param=param)
+
+
+def getRateEquation(key, value):
+	return " , min({abs1}, {abs2}) as rate ".format(abs1=getAbsEquation(getDivEquation(key, value)), abs2=getAbsEquation(getDivEquation(value, key)))
+
+
+def getSearchCondition(key, value):
+	query_ = ""
+	query_ += " or {key} REGEXP replace({value}, ' ', '.*') ".format(key=key, value=value)
+	query_ += " or {value} REGEXP replace({key}, ' ', '.*') ".format(key=key, value=value)
+	query_ += " or instr({key}, {value}) > 0 ".format(key=key, value=value)
+	query_ += " or instr({value}, {key}) > 0 ".format(key=key, value=value)
+	return query_
