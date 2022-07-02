@@ -333,6 +333,20 @@ def _list():
 		return cur.fetchall()
 
 
+def _tip():
+	with con:
+		cur = con.cursor()
+		cur.execute("select * from tip order by odr, name desc")
+		return cur.fetchall()
+
+
+def _search_guide():
+	with con:
+		cur = con.cursor()
+		cur.execute("select * from search_guide order by odr, name desc")
+		return cur.fetchall()
+
+
 def pattern():
 	with con:
 		cur = con.cursor()
