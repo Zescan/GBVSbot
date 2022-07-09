@@ -218,12 +218,12 @@ async def _search(ctx, charname, string):
 	elif len(skills) == 1:
 		rows = skills
 	if not rows:
-			await _skill(ctx, charname, command, skname)
+			await _tip(ctx)
 			embed = discord.Embed(title="검색 안내", description="오른쪽과 같이 입력할 수록 검색률이 오릅니다.", color=0x44e456)
 			for row in db._search_guide():
 				embed.add_field(name=row["name"], value=row["value"], inline=False)
 			await ctx.send(embed=embed)
-			await _tip(ctx)
+			await _skill(ctx, charname, command, skname)
 	else:
 			for row in rows:
 				info_dic = {'데미지': db.damage(row['damage']) or "-",
