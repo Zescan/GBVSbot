@@ -4,12 +4,12 @@ import random
 import re
 
 import discord
+from discord.ext import commands
 from discord_slash import SlashCommand
 from dotenv import load_dotenv
 
 import blow
 import db
-from discord.ext import commands
 
 load_dotenv()
 
@@ -183,8 +183,9 @@ async def _search(ctx, charname, string):
 	_search__logger = logging.getLogger("_search")
 	_search__logger.setLevel(logging.WARNING)
 	charname = db.name_ko(charname)
-	name_ko = charname
+# 	name_ko = charname
 	charname = db.en(charname)
+	name_ko = db.ko(charname)
 	if not re.search(re.compile("[a-zA-z]+"), charname):
 		return None
 	logging.debug(charname)
