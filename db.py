@@ -20,7 +20,7 @@ con.create_function("REGEXP", 2, regexp)
 
 def framedata(query_str=''):
 	framedata_logger = logging.getLogger("framedata")
-	framedata_logger.setLevel(logging.DEBUG)
+	framedata_logger.setLevel(logging.WARNING)
 	con.set_trace_callback(framedata_logger.debug)
 	framedata_logger.debug(query_str)
 	with con:
@@ -82,7 +82,7 @@ def fromCommand(charname, command):
 
 def fromSkill(charname, move_name_ko):
 	fromSkill_logger = logging.getLogger("fromSkill")
-	fromSkill_logger.setLevel(logging.DEBUG)
+	fromSkill_logger.setLevel(logging.WARNING)
 	fromSkill_logger.info("기술명에서 프레임데이터 검색")
 	con.set_trace_callback(fromSkill_logger.debug)
 	fromSkill_logger.debug(move_name_ko)
@@ -290,7 +290,7 @@ def _move_name_ko(charname, move):
 
 def _command(name, command_nick):
 	_command__logger = logging.getLogger("_command")
-	_command__logger.setLevel(logging.DEBUG)
+	_command__logger.setLevel(logging.WARNING)
 	con.set_trace_callback(_command__logger.debug)
 	_command__logger.info("커맨드 별명에서 커맨드를 검색합니다.")
 	_command__logger.debug(name)
