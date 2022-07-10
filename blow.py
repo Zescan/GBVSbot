@@ -8,8 +8,6 @@ async def t_embed(channel, title, description, data, icon, images):
 	for info_key in data:
 		embed.add_field(name=info_key, value="```{str}```".format(str=str(data[info_key]) or "-"), inline=False)
 	messages = []
-	message = await channel.send(embed=embed)
-	messages.append(message)
 	for image in images:
 		if image['image'] and image['image'].lower().find("http") > -1:
 				imgEmbed = discord.Embed(title="", color=0xfd4949)
@@ -17,6 +15,9 @@ async def t_embed(channel, title, description, data, icon, images):
 				imgEmbed.set_image(url=image['image'])
 				message = await channel.send(embed=imgEmbed)
 				messages.append(message)
+	message = await channel.send(embed=embed)
+	messages.append(message)
+
 	return messages
 
 
