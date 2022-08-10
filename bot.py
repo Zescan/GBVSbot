@@ -1,4 +1,5 @@
 import logging
+import os
 import random
 import re
 
@@ -9,6 +10,8 @@ from dotenv import load_dotenv
 
 import blow
 import db
+
+load_dotenv()
 
 logging.basicConfig(level=logging.WARN, format="[%(funcName)s] %(message)s %(filename)s:%(lineno)d")
 
@@ -392,6 +395,9 @@ async def validate(ctx):
 	else:
 		return True
 	return False
+token= os.environ["Bot_token']
 
-bot.run('Bot_token', bot=True)
+if len(token) <= 0:
+	raise 
+bot.run(token, bot=True)
 
