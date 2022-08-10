@@ -154,7 +154,7 @@ async def tip(ctx):
 
 
 async def _tip(ctx):
-		embed = discord.Embed(title="설명서", description="담당 : DEEPDIVE, 제작 : Rolling_Pumpkin", color=0x44e456)
+		embed = discord.Embed(title="설명서", description="담당 : DEEPDIVE, Zescan, 제작 : Rolling_Pumpkin", color=0x44e456)
 		for row in db._tip():
 			embed.add_field(name='{name}'.format(name=row['name']), value=row['value'], inline=False)
 		await ctx.send(embed=embed)
