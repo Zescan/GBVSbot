@@ -395,7 +395,7 @@ async def validate(ctx):
 	else:
 		return True
 	return False
-token= os.environ["Bot_token']
+token= os.environ['Bot_token']
 
 if len(token) <= 0:
 	raise 
