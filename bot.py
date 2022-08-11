@@ -235,6 +235,7 @@ async def _search(ctx, charname, string):
 					'히트시 이득': db.on(row['onhit']),
 					'공격레벨': row['attack_level'],
 					'상쇄레벨': row['clash_level'],
+					'기타':row['etc']
 					}
 				await blow.t_embed(ctx, row['name_ko'] + " - " + row['command'], row['move_name_ko'] or row['skname'] or row['command'], info_dic, db.icon(row['charname']), db.images(row['charname'], row['command']))
 
