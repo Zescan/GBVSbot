@@ -39,6 +39,11 @@ https://www.dustloop.com/wiki/index.php?title=GBVS/Controls
 ### 참조 페이지 : Dustloop Wiki GBVS
 https://www.dustloop.com/wiki/index.php?title=Granblue_Fantasy_Versus
 
+### 참조 페이지 : GBVSフレームデータだけ Wiki
+https://wikiwiki.jp/gbvs-frame/
+
+
+
 ### 채널 이용
 추가할 부분, 개선할 부분은 채널을 통해 말씀해주세요.
 * 채팅 입력 시 인식 문제로 앞에 특수문자를 넣어 입력해주세요.
