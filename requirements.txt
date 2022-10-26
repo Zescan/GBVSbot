@@ -1,6 +1,6 @@
 discord.py==1.7.3
 asyncio
 numpy
-discord-py-slash-command
+discord-py-interactions
 python-dotenv
 pynacl
